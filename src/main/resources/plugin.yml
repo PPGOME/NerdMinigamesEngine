@@ -1,0 +1,8 @@
+name: NerdMinigames
+version: '${project.version}'
+main: me.ppgome.nerdminigames.nerdminigames.NerdMinigames
+api-version: 1.20
+prefix: NerdMinigames
+authors: [ PPGOME ]
+description: A plugin for building and running minigames
+website: https://github.com/PPGOME
