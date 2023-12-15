@@ -12,6 +12,11 @@ import java.sql.SQLException;
 public final class NerdMinigames extends JavaPlugin {
 
     private Database database;
+    private static NerdMinigames instance;
+
+    public static NerdMinigames getPlugin() {
+        return instance;
+    }
 
     @Override
     public void onLoad() {
@@ -22,6 +27,8 @@ public final class NerdMinigames extends JavaPlugin {
     @Override
     public void onEnable() {
         // Plugin startup logic
+
+        instance = this;
 
         try {
 
