@@ -3,15 +3,11 @@ package me.ppgome.nerdminigames.nerdminigames;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.ppgome.nerdminigames.nerdminigames.arenabuilder.CreationCommands;
-import me.ppgome.nerdminigames.nerdminigames.db.Database;
-import org.bukkit.Bukkit;
+import me.ppgome.nerdminigames.nerdminigames.data.ArenasConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.sql.SQLException;
-
+import java.io.File;
 public final class NerdMinigames extends JavaPlugin {
-
-    private Database database;
     private static NerdMinigames instance;
 
     public static NerdMinigames getPlugin() {
@@ -22,6 +18,7 @@ public final class NerdMinigames extends JavaPlugin {
     public void onLoad() {
         CommandAPI.onLoad(new CommandAPIBukkitConfig(this).verboseOutput(true));
         CreationCommands.nerdGames();
+
     }
 
     @Override
@@ -30,29 +27,26 @@ public final class NerdMinigames extends JavaPlugin {
 
         instance = this;
 
-        try {
+        saveDefaultConfig();
 
-            if(!getDataFolder().exists()) {
-                getDataFolder().mkdirs();
-            }
+        // Check if arenas file exists. If no create it.
+        File arenaconfigfile = new File(getDataFolder(), "arenas.yml");
 
-            database = new Database(getDataFolder().getAbsolutePath() + "/mingames.db");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.out.println("Failed to connect to the database. Disabling plugin as database is needed. " + e.getMessage());
-            Bukkit.getPluginManager().disablePlugin(this);
+        if(!arenaconfigfile.exists()) {
+            arenaconfigfile.getParentFile().mkdirs();
+            saveResource("arenas.yml", false);
         }
+
+        ArenasConfig arenaconfig = new ArenasConfig(instance, "arenas.yml");
+        arenaconfig.newArena("Test", "PPGOME");
+        arenaconfig.newArena("Balls", "PPGOME");
+
+        arenaconfig.getArenas();
+
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-
-        try {
-            database.closeConnection();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-
     }
 }
