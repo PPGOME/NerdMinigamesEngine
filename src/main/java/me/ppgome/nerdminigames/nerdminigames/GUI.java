@@ -1,10 +1,13 @@
 package me.ppgome.nerdminigames.nerdminigames;
 
+import com.github.stefvanschie.inventoryframework.font.util.Font;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
+import com.github.stefvanschie.inventoryframework.gui.type.AnvilGui;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.component.Label;
 import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import me.ppgome.nerdminigames.nerdminigames.data.ArenasConfig;
 import net.kyori.adventure.text.Component;
@@ -33,15 +36,24 @@ public class GUI {
         topbackground.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
         topbackground.setRepeat(true);
 
+        OutlinePane bottombackground = new OutlinePane(0, 4, 9, 1, Pane.Priority.LOW);
+        bottombackground.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
+        bottombackground.setRepeat(true);
+
         ItemStack topicon = new ItemStack(Material.DIAMOND_SWORD);
         ItemMeta topiconmeta = topicon.getItemMeta();
         topiconmeta.displayName(Component.text("Pick an arena to edit below"));
         topicon.setItemMeta(topiconmeta);
-
         StaticPane topitem = new StaticPane(4, 0, 1, 1, Pane.Priority.HIGHEST);
         topitem.addItem(new GuiItem(topicon), 0, 0);
 
-        OutlinePane body = new OutlinePane(0, 1, 9, 4);
+        StaticPane newbutton = new StaticPane(4, 4, 1, 1, Pane.Priority.HIGHEST);
+        newbutton.addItem(new GuiItem(new ItemStack(Material.LIME_WOOL)), 0, 0);
+        newbutton.setOnClick(event -> {
+            newArenaCreator(player);
+        });
+
+        OutlinePane body = new OutlinePane(0, 1, 9, 3);
         List<String> arenas = new ArrayList<String>();
         ArenasConfig config = new ArenasConfig(NerdMinigames.getPlugin(), "arenas.yml");
         arenas = config.getArenas();
@@ -56,8 +68,23 @@ public class GUI {
 
         arenaselector.addPane(background);
         arenaselector.addPane(topbackground);
+        arenaselector.addPane(bottombackground);
         arenaselector.addPane(topitem);
+        arenaselector.addPane(newbutton);
         arenaselector.addPane(body);
         arenaselector.show(Bukkit.getPlayer(player));
     }
+
+    public static void newArenaCreator(String player) {
+        AnvilGui gui = new AnvilGui("Creating new arena...");
+
+        StaticPane firstslot = new StaticPane(Slot.fromIndex(0), 1, 1);
+        firstslot.addItem(new GuiItem(new ItemStack(Material.PAPER)), 0, 0);
+
+        gui.getFirstItemComponent().addPane(firstslot);
+
+        gui.show(Bukkit.getPlayer(player));
+
+    }
+
 }
