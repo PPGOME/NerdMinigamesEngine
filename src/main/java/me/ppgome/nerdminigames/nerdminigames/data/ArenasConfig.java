@@ -39,11 +39,11 @@ public class ArenasConfig {
 
     public void newArena(String arenaname, String arenaowner) {
         if(!getConfig().contains(arenaname)) {
-            getConfig().set(arenaname + ".Owner", arenaowner);
-            getConfig().set(arenaname + ".Teams", emptylist);
-            getConfig().set(arenaname + ".Spawns", emptylist);
-            getConfig().set(arenaname + ".Items", emptylist);
-            getConfig().set(arenaname + ".Objectives", emptylist);
+            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Owner", arenaowner);
+            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Teams", emptylist);
+            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Spawns", emptylist);
+            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Items", emptylist);
+            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Objectives", emptylist);
             save();
         } else {
             Bukkit.getLogger().log(Level.SEVERE, "ALREADY EXISTS");
@@ -54,7 +54,7 @@ public class ArenasConfig {
         ConfigurationSection configsec = getConfig().getConfigurationSection("");
         for(String key : configsec.getKeys(false)) {
             Bukkit.getLogger().log(Level.SEVERE, key);
-            arenas.add(key);
+            arenas.add(key.toUpperCase(Locale.ROOT));
         }
         return arenas;
     }
