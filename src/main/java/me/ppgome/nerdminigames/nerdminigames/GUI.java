@@ -4,6 +4,7 @@ import com.github.stefvanschie.inventoryframework.font.util.Font;
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.AnvilGui;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
+import com.github.stefvanschie.inventoryframework.gui.type.DropperGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
@@ -57,13 +58,13 @@ public class GUI {
         StaticPane newbutton = new StaticPane(4, 4, 1, 1, Pane.Priority.HIGHEST);
         newbutton.addItem(new GuiItem(newarenabutton), 0, 0);
         newbutton.setOnClick(event -> {
-            dataInputGUI(player, "Creating new arena...", "newArena");
+            dataInputGUI(player, "Creating new arena...", null, "newarena");
         });
 
         OutlinePane body = new OutlinePane(0, 1, 9, 3);
         List<String> arenas = new ArrayList<>();
-        ArenasConfig config = new ArenasConfig(NerdMinigames.getPlugin(), "arenas.yml");
-        arenas = config.getArenas();
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin(), "arenas.yml");
+        arenas = arenaconfig.getArenas();
 
         body.setOnClick(inventoryClickEvent -> {
             if(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName() != "") {
@@ -112,7 +113,7 @@ public class GUI {
                 }), 4, 0);
         buttons.addItem(new GuiItem(createButton(Material.PLAYER_HEAD, "Teams", "#ffffff"),
                 inventoryClickEvent -> {
-                    Bukkit.getPlayer(player).sendMessage(Component.text("BBBBBB"));
+                    editMenu(player, arenaname, "Teams");
                 }), 1, 0);
         buttons.addItem(new GuiItem(createButton(Material.CHEST, "Items", "#ffffff"),
                 inventoryClickEvent -> {
@@ -142,7 +143,59 @@ public class GUI {
         gui.show(Bukkit.getPlayer(player));
     }
 
-    public static void dataInputGUI(String player, String guiname, String action) {
+    public static void editMenu(String player, String arena, String option) {
+
+        ChestGui gui = new ChestGui(5, option);
+
+        gui.setOnGlobalClick(event -> event.setCancelled(true));
+        List<String> storage = new ArrayList<>();
+
+        OutlinePane background = new OutlinePane(0, 0, 9, 5, Pane.Priority.LOWEST);
+        background.addItem(new GuiItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
+        background.setRepeat(true);
+
+        OutlinePane topbackground = new OutlinePane(0, 0, 9, 1, Pane.Priority.LOW);
+        topbackground.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
+        topbackground.setRepeat(true);
+
+        OutlinePane bottombackground = new OutlinePane(0, 4, 9, 1, Pane.Priority.LOW);
+        bottombackground.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
+        bottombackground.setRepeat(true);
+
+        gui.addPane(background);
+        gui.addPane(topbackground);
+        gui.addPane(bottombackground);
+
+        if(option.equalsIgnoreCase("teams")) {
+            OutlinePane teamlist = new OutlinePane(0, 1, 9, 3);
+            ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin(), "arenas.yml");
+            storage = arenaconfig.getTeams(arena);
+            for(String team : storage) {
+                ItemStack item = createButton(Material.LEATHER_CHESTPLATE, team, "#FFFFFF");
+                teamlist.addItem(new GuiItem(item, inventoryClickEvent -> {
+                    teamConfirmation(arena, player, team);
+                }));
+            }
+
+            StaticPane options = new StaticPane(3, 4, 3, 1);
+
+            options.addItem(new GuiItem((createButton(Material.ARROW, "Back", "#FFFFFF")),
+                    inventoryClickEvent -> {
+                        arenaMenu(arena, player);
+                    }), 0, 0);
+            options.addItem(new GuiItem((createButton(Material.LIME_WOOL, "Add New", "#FFFFFF")),
+                    inventoryClickEvent -> {
+                        dataInputGUI(player, "Adding new team to...", arena, "newteam");
+                    }), 2, 0);
+
+            gui.addPane(options);
+            gui.addPane(teamlist);
+        }
+
+        gui.show(Bukkit.getPlayer(player));
+    }
+
+    public static void dataInputGUI(String player, String guiname, String arena, String action) {
         // Valid actions: newArena, newTeam, newSpawn, newObjective
         AnvilGui gui = new AnvilGui(guiname);
 
@@ -174,16 +227,19 @@ public class GUI {
         StaticPane lastslot = new StaticPane(Slot.fromIndex(0), 1, 1);
         lastslot.addItem(new GuiItem(confirm), 0 ,0);
 
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin(), "arenas.yml");
+
         firstslot.setOnClick(inventoryClickEvent -> {
             arenaSelector(player);
         });
-
         lastslot.setOnClick(inventoryClickEvent -> {
             if(action.equalsIgnoreCase("newarena")) {
-                ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin(), "arenas.yml");
                 arenaconfig.newArena(gui.getRenameText(), player);
+                arenaSelector(player);
+            } else if(action.equalsIgnoreCase("newteam")) {
+                arenaconfig.addTeam(arena, gui.getRenameText());
+                editMenu(player, arena, "teams");
             }
-            arenaSelector(player);
         });
 
         gui.getFirstItemComponent().addPane(renameitemslot);
@@ -200,6 +256,36 @@ public class GUI {
         itemmeta.displayName(Component.text(name).color(TextColor.fromHexString(color)));
         item.setItemMeta(itemmeta);
         return item;
+    }
+
+    public static void teamConfirmation(String arena, String player, String team) {
+
+        DropperGui gui = new DropperGui("Confirm your changes?");
+
+        gui.setOnGlobalClick(event -> event.setCancelled(true));
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin(), "arenas.yml");
+
+        OutlinePane background = new OutlinePane(0, 0, 3, 3, Pane.Priority.LOWEST);
+        background.addItem(new GuiItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
+        background.setRepeat(true);
+
+        StaticPane buttons = new StaticPane(0, 1, 3, 1);
+
+        buttons.addItem(new GuiItem((createButton(Material.RED_WOOL, "No", "#ff5151")),
+                inventoryClickEvent -> {
+                    editMenu(player, arena, "Teams");
+                }), 0, 0);
+        buttons.addItem(new GuiItem((createButton(Material.LIME_WOOL, "Yes", "#b5ff20")),
+                inventoryClickEvent -> {
+                    arenaconfig.deleteTeam(arena, team);
+                    editMenu(player, arena, "Teams");
+                }), 2, 0);
+
+        gui.getContentsComponent().addPane(background);
+        gui.getContentsComponent().addPane(buttons);
+
+        gui.show(Bukkit.getPlayer(player));
+
     }
 
 }

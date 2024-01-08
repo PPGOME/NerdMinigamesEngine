@@ -50,6 +50,31 @@ public class ArenasConfig {
         }
     }
 
+    public void addTeam(String arena, String team) {
+        List<String> teams = getTeams(arena);
+        if(!teams.stream().anyMatch(e -> e.equalsIgnoreCase(team))) {
+            teams.add(team);
+            getConfig().set(arena + ".Teams", teams);
+            save();
+        }
+    }
+
+    public void deleteTeam(String arena, String team) {
+        List<String> teams = getTeams(arena);
+        System.out.println(teams);
+        teams.removeIf(teamz -> teamz.equals(team));
+        System.out.println(teams);
+        getConfig().set(arena + ".Teams", teams);
+        save();
+        teams = null;
+    }
+
+    public List<String> getTeams(String arena) {
+        List<String> teams = new ArrayList<>();
+        teams = getConfig().getStringList(arena + ".Teams");
+        return teams;
+    }
+
     public List<String> getArenas() {
         ConfigurationSection configsec = getConfig().getConfigurationSection("");
         for(String key : configsec.getKeys(false)) {
@@ -57,10 +82,6 @@ public class ArenasConfig {
             arenas.add(key.toUpperCase(Locale.ROOT));
         }
         return arenas;
-    }
-
-    public void addTeam(String arenaname, String team) {
-
     }
 
     public File getFile() {
