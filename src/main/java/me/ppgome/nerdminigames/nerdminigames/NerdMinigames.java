@@ -3,7 +3,6 @@ package me.ppgome.nerdminigames.nerdminigames;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.ppgome.nerdminigames.nerdminigames.arenabuilder.CreationCommands;
-import me.ppgome.nerdminigames.nerdminigames.data.ArenasConfig;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -37,9 +36,7 @@ public final class NerdMinigames extends JavaPlugin {
             saveResource("arenas.yml", false);
         }
 
-        ArenasConfig arenaconfig = new ArenasConfig(instance, "arenas.yml");
-        arenaconfig.newArena("Test", "PPGOME");
-        arenaconfig.newArena("Balls", "PPGOME");
+        ArenasConfig arenaconfig = new ArenasConfig(instance);
 
         arenaconfig.getArenas();
 

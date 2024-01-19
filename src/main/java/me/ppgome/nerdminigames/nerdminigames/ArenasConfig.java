@@ -1,10 +1,12 @@
-package me.ppgome.nerdminigames.nerdminigames.data;
+package me.ppgome.nerdminigames.nerdminigames;
 
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
+import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.util.*;
@@ -17,8 +19,8 @@ public class ArenasConfig {
     private final List<String> emptylist = Collections.<String> emptyList();
     private final List<String> arenas = new ArrayList<String>();
 
-    public ArenasConfig(NerdMinigames plugin, String path) {
-        this(plugin.getDataFolder().getAbsolutePath() + "/" + path);
+    public ArenasConfig(NerdMinigames plugin) {
+        this(plugin.getDataFolder().getAbsolutePath() + "/arenas.yml");
         this.plugin = plugin;
     }
 
@@ -37,17 +39,29 @@ public class ArenasConfig {
         }
     }
 
-    public void newArena(String arenaname, String arenaowner) {
-        if(!getConfig().contains(arenaname)) {
-            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Owner", arenaowner);
-            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Teams", emptylist);
-            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Spawns", emptylist);
-            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Items", emptylist);
-            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Objectives", emptylist);
+    public void newArena(Arena arena) {
+        if(!getConfig().contains(arena.getArenaName())) {
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Owner", arena.getOwner());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".World", arena.getWorld());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Boundaries", arena.getBoundaries());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Teams", arena.getTeams());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Items", arena.getItems());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Spawns", arena.getSpawns());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Objectives", arena.getObjectives());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Storage", arena.getStorage());
+            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Armour", arena.getArmour());
             save();
-        } else {
-            Bukkit.getLogger().log(Level.SEVERE, "ALREADY EXISTS");
         }
+//        if(!getConfig().contains(arenaname)) {
+//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Owner", arenaowner);
+//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Teams", emptylist);
+//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Spawns", emptylist);
+//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Items", emptylist);
+//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Objectives", emptylist);
+//            save();
+//        } else {
+//            Bukkit.getLogger().log(Level.SEVERE, "ALREADY EXISTS");
+//        }
     }
 
     public void addTeam(String arena, String team) {
@@ -67,6 +81,10 @@ public class ArenasConfig {
         getConfig().set(arena + ".Teams", teams);
         save();
         teams = null;
+    }
+
+    public void additem(String arena, ItemStack item, String team, int chance) {
+
     }
 
     public List<String> getTeams(String arena) {
