@@ -5,6 +5,8 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import me.ppgome.nerdminigames.nerdminigames.data.Arena;
+import me.ppgome.nerdminigames.nerdminigames.data.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
@@ -12,17 +14,18 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class ItemInputGUI extends InputGUI implements NerdGUI {
+public class ItemCreationGUI extends InputGUI implements NerdGUI {
 
     private Player player;
-    private String arena = "";
-    private String team = "";
-    private String chance = "";
+    private Arena arena;
+    private Team team;
+    private String chance;
+    private boolean isCurrency;
     private NerdGUI backgui;
     private ChestGui gui;
     private ItemStack item;
 
-    public ItemInputGUI(Player player, String arena, String team, String chance, NerdGUI backgui) {
+    public ItemCreationGUI(Player player, Arena arena, Team team, String chance, NerdGUI backgui) {
         this.player = player;
         this.arena = arena;
         this.team = team;

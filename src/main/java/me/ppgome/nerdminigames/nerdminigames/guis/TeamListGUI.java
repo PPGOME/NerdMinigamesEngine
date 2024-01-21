@@ -12,9 +12,10 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.regions.Region;
+import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
-import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
+import me.ppgome.nerdminigames.nerdminigames.data.Team;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Material;
@@ -25,32 +26,25 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ArenaListGUI implements NerdGUI {
+public class TeamListGUI implements NerdGUI {
 
     //TODO If GUI is null when back button pressed, close GUI completely
 
     private Player player;
     private NerdGUI backgui;
-    private String arena;
-    private DataInputGUI datagui;
-    private List<String> arenas = new ArrayList<>();
+    private Arena arena;
     private List<ItemStack> itemlist = new ArrayList<>();
 
-    public ArenaListGUI(Player player, NerdGUI backgui, String arena) {
+    public TeamListGUI(Player player, NerdGUI backgui, Arena arena) {
         this.player = player;
         this.backgui = backgui;
         this.arena = arena;
     }
 
-    public ArenaListGUI(Player player, NerdGUI backgui) {
-        this.player = player;
-        this.backgui = backgui;
-    }
-
     @Override
     public void displayGUI() {
 
-        ChestGui gui = new ChestGui(5, "Arenas");
+        ChestGui gui = new ChestGui(5, "Teams");
 
         gui.setOnGlobalClick(e -> e.setCancelled(true));
         ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
@@ -67,29 +61,10 @@ public class ArenaListGUI implements NerdGUI {
         body.addItem(new GuiItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
         body.setRepeat(true);
 
-        // If an arena creation form was submitted
-        if(datagui != null) {
-            if(!datagui.getInput().equalsIgnoreCase("")) {
-                Region region = null;
-                Actor WEPlayer = BukkitAdapter.adapt(player);
-                LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(WEPlayer);
-                // Check if user has a WE selection
-                try {
-                    region = localSession.getSelection();
-                    Arena arena = new Arena(datagui.getInput(), player, player.getWorld().getName(), region.getMaximumPoint(), region.getMinimumPoint());
-                    arenaconfig.editArena(arena);
-                } catch (IncompleteRegionException e) {
-                    player.sendMessage(Component.text("Hey, you don't have a worldedit selection to define this arena!")
-                            .color(TextColor.fromHexString("#ff6464")));
-                }
-            }
+        for(Team team : arena.getTeams()) {
+            itemlist.add(createButton(Material.REDSTONE, team.getTeamName(), "#FFFFFF"));
         }
 
-        arenas = arenaconfig.getArenas();
-        // For each arena, create a button for it in the GUI
-        for(String object : arenas) {
-            itemlist.add(createButton(Material.REDSTONE, object, "#FFFFFF"));
-        }
         pages.populateWithItemStacks(itemlist);
 
         StaticPane pageButtonBack = new StaticPane(1, 4, 1, 1, Pane.Priority.HIGHEST);
@@ -111,7 +86,7 @@ public class ArenaListGUI implements NerdGUI {
         pages.setOnClick(inventoryClickEvent -> {
             System.out.println(pages.getPage());
             if(!inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equals("")) {
-                new ArenaGUI(player, arenaconfig.getArena(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName()), this).displayGUI();
+                // TODO Make confirmation for delete screen
             }
         });
 
@@ -119,8 +94,7 @@ public class ArenaListGUI implements NerdGUI {
         newbutton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF"), inventoryClickEvent -> {
             newbutton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF")), 0, 0);
             newbutton.setOnClick(e -> {
-                datagui = new DataInputGUI(player, "Input new arena name", this);
-                datagui.displayGUI();
+                new TeamCreationGUI(player, this).displayGUI();
             });
         }), 0, 0);
 
@@ -143,4 +117,5 @@ public class ArenaListGUI implements NerdGUI {
         item.setItemMeta(itemmeta);
         return item;
     }
+
 }

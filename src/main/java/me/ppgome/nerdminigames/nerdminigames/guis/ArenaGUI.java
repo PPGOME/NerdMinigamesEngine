@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.Bukkit;
@@ -16,10 +17,10 @@ import org.bukkit.inventory.meta.ItemMeta;
 public class ArenaGUI implements NerdGUI {
 
     private Player player;
-    private String arena = "";
+    private Arena arena;
     private NerdGUI backgui;
 
-    public ArenaGUI(Player player, String arena, NerdGUI backgui) {
+    public ArenaGUI(Player player, Arena arena, NerdGUI backgui) {
         this.player = player;
         this.arena = arena;
         this.backgui = backgui;
@@ -27,7 +28,7 @@ public class ArenaGUI implements NerdGUI {
 
     @Override
     public void displayGUI() {
-        ChestGui gui = new ChestGui(4, "Editing " + arena);
+        ChestGui gui = new ChestGui(4, "Editing " + arena.getArenaName());
 
         gui.setOnGlobalClick(event -> event.setCancelled(true));
 
@@ -50,11 +51,12 @@ public class ArenaGUI implements NerdGUI {
                 }), 4, 0);
         buttons.addItem(new GuiItem(createButton(Material.PLAYER_HEAD, "Teams", "#ffffff"),
                 inventoryClickEvent -> {
-                    new ListGUI(player, "teams", this, arena).displayGUI();
+                    new TeamListGUI(player, this, arena).displayGUI();
                 }), 1, 0);
         buttons.addItem(new GuiItem(createButton(Material.CHEST, "Items", "#ffffff"),
                 inventoryClickEvent -> {
-                    new ListGUI(player, "items", this, arena).displayGUI();
+            // TODO FIX THIS
+//                    new ItemListGUI().displayGUI();
                 }), 2, 1);
         buttons.addItem(new GuiItem(createButton(Material.EXPERIENCE_BOTTLE, "Objectives", "#ffffff"),
                 inventoryClickEvent -> {

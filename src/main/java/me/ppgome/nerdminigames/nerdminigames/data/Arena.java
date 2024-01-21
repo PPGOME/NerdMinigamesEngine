@@ -1,6 +1,7 @@
 package me.ppgome.nerdminigames.nerdminigames.data;
 
 import com.sk89q.worldedit.math.BlockVector3;
+import it.unimi.dsi.fastutil.Hash;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -35,6 +36,17 @@ public class Arena {
         this.boundaries.put("x2", corner2.getX());
         this.boundaries.put("y2", corner2.getY());
         this.boundaries.put("z2", corner2.getZ());
+    }
+
+    public Arena(String arenaName, String owner, String world, HashMap<String, Integer> boundaries, List<Team> teams,
+                 List<ItemStack> items, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage, List<Armour> armour) {
+        this.arenaName = arenaName;
+        this.owner = owner;
+        this.world = world;
+        this.boundaries = boundaries;
+        this.teams = teams;
+        this.items = items;
+        this.spawns = spawns;
     }
 
     public String getArenaName() {
@@ -73,8 +85,17 @@ public class Arena {
         return teams;
     }
 
-    public void setTeams(List<Team> teams) {
-        this.teams = teams;
+    public Team getTeamByName(String name) {
+        for(Team team : getTeams()) {
+            if (team.getTeamName().equalsIgnoreCase(name)) {
+                return team;
+            }
+        }
+        return null;
+    }
+
+    public void addTeam(Team team) {
+        this.teams.add(team);
     }
 
     public List<ItemStack> getItems() {

@@ -1,7 +1,7 @@
 package me.ppgome.nerdminigames.nerdminigames;
 
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
-import me.ppgome.nerdminigames.nerdminigames.data.Arena;
+import me.ppgome.nerdminigames.nerdminigames.data.*;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -39,7 +39,7 @@ public class ArenasConfig {
         }
     }
 
-    public void newArena(Arena arena) {
+    public void editArena(Arena arena) {
         if(!getConfig().contains(arena.getArenaName())) {
             getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Owner", arena.getOwner());
             getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".World", arena.getWorld());
@@ -62,6 +62,28 @@ public class ArenasConfig {
 //        } else {
 //            Bukkit.getLogger().log(Level.SEVERE, "ALREADY EXISTS");
 //        }
+    }
+
+    public Arena getArena(String arenaName) {
+        String arena = arenaName.toUpperCase(Locale.ROOT);
+        String owner = getConfig().getString(arenaName + ".Owner");
+        String world = getConfig().getString(arenaName + ".World");
+        HashMap<String, Integer> boundaries = new HashMap<>();
+
+        if(config.getConfigurationSection(arenaName + ".Boundaries") != null) {
+            for(String key : config.getConfigurationSection(arenaName + ".Boundaries").getKeys(false)) {
+                boundaries.put(key, Integer.valueOf(config.get(arenaName + ".Boundaries." + key).toString()));
+            }
+        }
+
+        List<Team> teams = new ArrayList<>();
+        List<ItemStack> items = new ArrayList<>();
+        List<Spawn> spawns = new ArrayList<>();
+        List<Objective> objectives = new ArrayList<>();
+        List<Storage> storage = new ArrayList<>();
+        List<Armour> armour = new ArrayList<>();
+
+        return new Arena(arena, owner, world, boundaries, teams, items, spawns, objectives, storage, armour);
     }
 
     public void addTeam(String arena, String team) {
