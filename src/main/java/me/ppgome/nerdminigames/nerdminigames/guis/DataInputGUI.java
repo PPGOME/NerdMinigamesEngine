@@ -58,8 +58,6 @@ public class DataInputGUI extends InputGUI implements NerdGUI{
         lastslot.addItem(new GuiItem(confirm), 0 ,0);
 
         firstslot.setOnClick(inventoryClickEvent -> {
-            // TODO figure out how to differrentiate return location
-            // TODO HEY KEELAN YOU CAN JUST SAVE AN INSTANCE OF THIS OBJECT AND CALL A METHOD TO GET THE INPUT VARIABLE
             backgui.displayGUI();
         });
         lastslot.setOnClick(inventoryClickEvent -> {
@@ -77,13 +75,4 @@ public class DataInputGUI extends InputGUI implements NerdGUI{
     public String getInput() {
         return input;
     }
-
-    public ItemStack createButton(Material material, String name, String color) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta itemmeta = item.getItemMeta();
-        itemmeta.displayName(Component.text(name).color(TextColor.fromHexString(color)));
-        item.setItemMeta(itemmeta);
-        return item;
-    }
-
 }

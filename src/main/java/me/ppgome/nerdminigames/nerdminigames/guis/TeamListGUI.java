@@ -6,12 +6,7 @@ import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
-import com.sk89q.worldedit.IncompleteRegionException;
-import com.sk89q.worldedit.LocalSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.extension.platform.Actor;
-import com.sk89q.worldedit.regions.Region;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
@@ -25,6 +20,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+
+import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
 public class TeamListGUI implements NerdGUI {
 
@@ -62,7 +60,7 @@ public class TeamListGUI implements NerdGUI {
         body.setRepeat(true);
 
         for(Team team : arena.getTeams()) {
-            itemlist.add(createButton(Material.REDSTONE, team.getTeamName(), "#FFFFFF"));
+            itemlist.add(createButton(Material.LEATHER_CHESTPLATE, team.getTeamName(), "#FFFFFF"));
         }
 
         pages.populateWithItemStacks(itemlist);
@@ -86,20 +84,24 @@ public class TeamListGUI implements NerdGUI {
         pages.setOnClick(inventoryClickEvent -> {
             System.out.println(pages.getPage());
             if(!inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equals("")) {
-                // TODO Make confirmation for delete screen
+                String team = inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName();
+                if(team.substring(0, 2).equalsIgnoreCase("§f")) {
+                    team = team.substring(2);
+                }
+                new TeamCreationGUI(arena.getTeamByName(team), player, arena, this).displayGUI();
             }
         });
 
-        StaticPane newbutton = new StaticPane(4, 4, 1, 1, Pane.Priority.HIGH);
-        newbutton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF"), inventoryClickEvent -> {
-            newbutton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF")), 0, 0);
-            newbutton.setOnClick(e -> {
-                new TeamCreationGUI(player, this).displayGUI();
-            });
-        }), 0, 0);
+        StaticPane nonPageButton = new StaticPane(3, 4, 3, 1, Pane.Priority.HIGH);
+        nonPageButton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF"), inventoryClickEvent -> {
+            backgui.displayGUI();
+        }), Slot.fromIndex(0));
+        nonPageButton.addItem(new GuiItem(createButton(Material.NAME_TAG, "Add new...", "#FFFFFF"), inventoryClickEvent -> {
+            new TeamCreationGUI(player, arena, this).displayGUI();
+        }), Slot.fromIndex(2));
 
         gui.addPane(whitebars);
-        gui.addPane(newbutton);
+        gui.addPane(nonPageButton);
         gui.addPane(pages);
         gui.addPane(pageButtonBack);
         gui.addPane(pageButtonNext);
@@ -107,15 +109,6 @@ public class TeamListGUI implements NerdGUI {
 
         gui.show(player);
 
-    }
-
-    @Override
-    public ItemStack createButton(Material material, String name, String color) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta itemmeta = item.getItemMeta();
-        itemmeta.displayName(Component.text(name).color(TextColor.fromHexString(color)));
-        item.setItemMeta(itemmeta);
-        return item;
     }
 
 }

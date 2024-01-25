@@ -5,6 +5,8 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
+import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
@@ -13,6 +15,8 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
 public class ArenaGUI implements NerdGUI {
 
@@ -31,6 +35,13 @@ public class ArenaGUI implements NerdGUI {
         ChestGui gui = new ChestGui(4, "Editing " + arena.getArenaName());
 
         gui.setOnGlobalClick(event -> event.setCancelled(true));
+
+        ArenasConfig arenasConfig = new ArenasConfig(NerdMinigames.getPlugin());
+        arenasConfig.getConfig().set("thisisatest.hello", "a");
+
+        System.out.println(arena.getBoundaries());
+        System.out.println(arena.getOwner());
+        System.out.println(arena.getWorld());
 
         OutlinePane background = new OutlinePane(0, 0, 9, 4, Pane.Priority.LOWEST);
         background.addItem(new GuiItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
@@ -82,15 +93,6 @@ public class ArenaGUI implements NerdGUI {
         gui.addPane(backbutton);
 
         gui.show(player);
-    }
-
-    @Override
-    public ItemStack createButton(Material material, String name, String color) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta itemmeta = item.getItemMeta();
-        itemmeta.displayName(Component.text(name).color(TextColor.fromHexString(color)));
-        item.setItemMeta(itemmeta);
-        return item;
     }
 
 }

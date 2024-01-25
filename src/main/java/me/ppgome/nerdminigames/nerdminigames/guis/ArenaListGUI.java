@@ -25,21 +25,19 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
+
 public class ArenaListGUI implements NerdGUI {
 
     //TODO If GUI is null when back button pressed, close GUI completely
 
-    private Player player;
-    private NerdGUI backgui;
-    private String arena;
+    private final Player player;
+    private final NerdGUI backgui;
     private DataInputGUI datagui;
-    private List<String> arenas = new ArrayList<>();
-    private List<ItemStack> itemlist = new ArrayList<>();
 
     public ArenaListGUI(Player player, NerdGUI backgui, String arena) {
         this.player = player;
         this.backgui = backgui;
-        this.arena = arena;
     }
 
     public ArenaListGUI(Player player, NerdGUI backgui) {
@@ -60,7 +58,7 @@ public class ArenaListGUI implements NerdGUI {
         whitebars.setRepeat(true);
 
         PaginatedPane pages = new PaginatedPane(0, 1, 9, 3, Pane.Priority.HIGH);
-        itemlist = new ArrayList<>();
+        List<ItemStack> itemlist = new ArrayList<>();
         pages.clear();
 
         OutlinePane body = new OutlinePane(0, 1, 9, 3, Pane.Priority.NORMAL);
@@ -85,7 +83,7 @@ public class ArenaListGUI implements NerdGUI {
             }
         }
 
-        arenas = arenaconfig.getArenas();
+        List<String> arenas = arenaconfig.getArenas();
         // For each arena, create a button for it in the GUI
         for(String object : arenas) {
             itemlist.add(createButton(Material.REDSTONE, object, "#FFFFFF"));
@@ -118,10 +116,8 @@ public class ArenaListGUI implements NerdGUI {
         StaticPane newbutton = new StaticPane(4, 4, 1, 1, Pane.Priority.HIGH);
         newbutton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF"), inventoryClickEvent -> {
             newbutton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF")), 0, 0);
-            newbutton.setOnClick(e -> {
-                datagui = new DataInputGUI(player, "Input new arena name", this);
-                datagui.displayGUI();
-            });
+            datagui = new DataInputGUI(player, "Input new arena name", this);
+            datagui.displayGUI();
         }), 0, 0);
 
         gui.addPane(whitebars);
@@ -133,14 +129,5 @@ public class ArenaListGUI implements NerdGUI {
 
         gui.show(player);
 
-    }
-
-    @Override
-    public ItemStack createButton(Material material, String name, String color) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta itemmeta = item.getItemMeta();
-        itemmeta.displayName(Component.text(name).color(TextColor.fromHexString(color)));
-        item.setItemMeta(itemmeta);
-        return item;
     }
 }

@@ -2,6 +2,8 @@ package me.ppgome.nerdminigames.nerdminigames.data;
 
 import com.sk89q.worldedit.math.BlockVector3;
 import it.unimi.dsi.fastutil.Hash;
+import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
+import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -96,6 +98,22 @@ public class Arena {
 
     public void addTeam(Team team) {
         this.teams.add(team);
+    }
+
+    public void editTeam(Team team, Arena arena) {
+        Team tempteam = arena.getTeamByName(team.getTeamName());
+        if(tempteam != null) {
+            tempteam.setTeamName(team.getTeamName());
+            tempteam.setMinPlayers(team.getMinPlayers());
+            tempteam.setMaxPlayers(team.getMaxPlayers());
+        } else {
+            arena.addTeam(team);
+        }
+        new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+    }
+
+    public void deleteTeam(Team team) {
+        this.teams.remove(team);
     }
 
     public List<ItemStack> getItems() {

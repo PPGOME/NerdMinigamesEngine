@@ -7,6 +7,4 @@ public interface NerdGUI {
 
     void displayGUI();
 
-    ItemStack createButton(Material material, String name, String color);
-
 }

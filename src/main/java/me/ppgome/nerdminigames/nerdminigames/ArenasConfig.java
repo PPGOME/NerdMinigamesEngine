@@ -40,43 +40,62 @@ public class ArenasConfig {
     }
 
     public void editArena(Arena arena) {
-        if(!getConfig().contains(arena.getArenaName())) {
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Owner", arena.getOwner());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".World", arena.getWorld());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Boundaries", arena.getBoundaries());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Teams", arena.getTeams());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Items", arena.getItems());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Spawns", arena.getSpawns());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Objectives", arena.getObjectives());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Storage", arena.getStorage());
-            getConfig().set(arena.getArenaName().toUpperCase(Locale.ROOT) + ".Armour", arena.getArmour());
-            save();
+        System.out.println("c");
+        String arenaname = arena.getArenaName().toUpperCase(Locale.ROOT);
+        System.out.println(arenaname);
+        if(arena.getArenaName().toUpperCase(Locale.ROOT).substring(0, 2).equalsIgnoreCase("§F")) {
+            arenaname = arenaname.substring(2);
+            System.out.println("this is the " + arenaname);
         }
-//        if(!getConfig().contains(arenaname)) {
-//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Owner", arenaowner);
-//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Teams", emptylist);
-//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Spawns", emptylist);
-//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Items", emptylist);
-//            getConfig().set(arenaname.toUpperCase(Locale.ROOT) + ".Objectives", emptylist);
-//            save();
-//        } else {
-//            Bukkit.getLogger().log(Level.SEVERE, "ALREADY EXISTS");
-//        }
+        System.out.println("d");
+        getConfig().set(arenaname + ".Owner", arena.getOwner());
+        getConfig().set(arenaname + ".World", arena.getWorld());
+        getConfig().set(arenaname + ".Boundaries", arena.getBoundaries());
+
+        System.out.println(arena.getTeams().size());
+        List<String> teamdata = new ArrayList<>();
+
+        for(Team team : arena.getTeams()) {
+            teamdata.add(team.getTeamName());
+        }
+        getConfig().set(arenaname + ".Teams", teamdata);
+
+        for(int i = 0; i < arena.getTeams().size(); i++) {
+            getConfig().set(arenaname + ".Teams." + teamdata.get(i) + ".Min", arena.getTeams().get(i).getMinPlayers());
+            getConfig().set(arenaname + ".Teams." + teamdata.get(i) + ".Max", arena.getTeams().get(i).getMaxPlayers());
+        }
+
+        getConfig().set(arenaname + ".Items", arena.getItems());
+        getConfig().set(arenaname + ".Spawns", arena.getSpawns());
+        getConfig().set(arenaname + ".Objectives", arena.getObjectives());
+        getConfig().set(arenaname + ".Storage", arena.getStorage());
+        getConfig().set(arenaname + ".Armour", arena.getArmour());
+        save();
     }
 
     public Arena getArena(String arenaName) {
-        String arena = arenaName.toUpperCase(Locale.ROOT);
-        String owner = getConfig().getString(arenaName + ".Owner");
-        String world = getConfig().getString(arenaName + ".World");
+        String arena = arenaName;
+        if(arena.toUpperCase(Locale.ROOT).substring(0, 2).equalsIgnoreCase("§F")) {
+            arena = arenaName.toUpperCase().substring(2);
+        }
+        System.out.println(arena);
+        String owner = getConfig().getString(arena + ".Owner");
+        String world = getConfig().getString(arena + ".World");
         HashMap<String, Integer> boundaries = new HashMap<>();
 
-        if(config.getConfigurationSection(arenaName + ".Boundaries") != null) {
-            for(String key : config.getConfigurationSection(arenaName + ".Boundaries").getKeys(false)) {
-                boundaries.put(key, Integer.valueOf(config.get(arenaName + ".Boundaries." + key).toString()));
+        if(config.getConfigurationSection(arena + ".Boundaries") != null) {
+            for(String key : config.getConfigurationSection(arena + ".Boundaries").getKeys(false)) {
+                boundaries.put(key, Integer.valueOf(config.get(arena + ".Boundaries." + key).toString()));
             }
         }
 
         List<Team> teams = new ArrayList<>();
+        if(config.getConfigurationSection(arena + ".Teams") != null) {
+            for(String key : config.getConfigurationSection(arena + ".Teams").getKeys(false)) {
+                teams.add(new Team(key, getConfig().getInt(arena + ".Teams." + key + ".Min"), getConfig().getInt(arena + ".Teams." + key + ".Max")));
+            }
+        }
+
         List<ItemStack> items = new ArrayList<>();
         List<Spawn> spawns = new ArrayList<>();
         List<Objective> objectives = new ArrayList<>();

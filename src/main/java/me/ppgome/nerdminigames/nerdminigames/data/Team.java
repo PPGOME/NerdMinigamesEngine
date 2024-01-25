@@ -2,24 +2,14 @@ package me.ppgome.nerdminigames.nerdminigames.data;
 
 public class Team {
 
-    private Arena arena;
     private String teamName;
     private int minPlayers = 1;
     private int maxPlayers = 999;
 
-    public Team(Arena arena, String teamName, int minPlayers, int maxPlayers) {
-        this.arena = arena;
+    public Team(String teamName, int minPlayers, int maxPlayers) {
         this.teamName = teamName;
         this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
-    }
-
-    public Arena getArena() {
-        return arena;
-    }
-
-    public void setArena(Arena arena) {
-        this.arena = arena;
     }
 
     public String getTeamName() {

@@ -9,7 +9,4 @@ import org.bukkit.inventory.ItemStack;
 public abstract class InputGUI implements NerdGUI {
     @Override
     public abstract void displayGUI();
-
-    @Override
-    public abstract ItemStack createButton(Material material, String name, String color);
 }

@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
+
 public class ItemCreationGUI extends InputGUI implements NerdGUI {
 
     private Player player;
@@ -101,15 +103,6 @@ public class ItemCreationGUI extends InputGUI implements NerdGUI {
 
         gui.show(player);
 
-    }
-
-    @Override
-    public ItemStack createButton(Material material, String name, String color) {
-        ItemStack item = new ItemStack(material);
-        ItemMeta itemmeta = item.getItemMeta();
-        itemmeta.displayName(Component.text(name).color(TextColor.fromHexString(color)));
-        item.setItemMeta(itemmeta);
-        return item;
     }
 
 }
