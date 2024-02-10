@@ -1,8 +1,5 @@
 messages:
   error:
-    # The error for when a field in this config file or the arenas file is empty
-    isempty: "Hey, one of the fields you provided doesn't exist (message in config file, arena, etc.)."
-
     # The colours of the text, in hex codes. Include the # (i.e. #FFFFFF)
     color:
       bracket: "#c2bfb8"

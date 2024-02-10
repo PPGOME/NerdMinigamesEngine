@@ -62,7 +62,6 @@ public class TeamCreationGUI implements NerdGUI {
         // Cancel
         buttons.addItem(new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Cancel", "#ff5151"), inventoryClickEvent -> {
             backgui.displayGUI();
-            System.out.println(arena.getArenaName().toUpperCase(Locale.ROOT));
         }), Slot.fromIndex(0));
 
         // Confirm
@@ -153,7 +152,6 @@ public class TeamCreationGUI implements NerdGUI {
             new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
             backgui.displayGUI();
             backgui.displayGUI();
-            System.out.println(backgui);
         }
 
     }

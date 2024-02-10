@@ -2,6 +2,7 @@ package me.ppgome.nerdminigames.nerdminigames;
 
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.*;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -53,19 +54,34 @@ public class ArenasConfig {
         getConfig().set(arenaname + ".Boundaries", arena.getBoundaries());
 
         System.out.println(arena.getTeams().size());
-        List<String> teamdata = new ArrayList<>();
+
+        // Teams
+        List<String> data = new ArrayList<>();
 
         for(Team team : arena.getTeams()) {
-            teamdata.add(team.getTeamName());
+            data.add(team.getTeamName());
         }
-        getConfig().set(arenaname + ".Teams", teamdata);
+        getConfig().set(arenaname + ".Teams", data);
 
         for(int i = 0; i < arena.getTeams().size(); i++) {
-            getConfig().set(arenaname + ".Teams." + teamdata.get(i) + ".Min", arena.getTeams().get(i).getMinPlayers());
-            getConfig().set(arenaname + ".Teams." + teamdata.get(i) + ".Max", arena.getTeams().get(i).getMaxPlayers());
+            getConfig().set(arenaname + ".Teams." + data.get(i) + ".Min", arena.getTeams().get(i).getMinPlayers());
+            getConfig().set(arenaname + ".Teams." + data.get(i) + ".Max", arena.getTeams().get(i).getMaxPlayers());
         }
 
-        getConfig().set(arenaname + ".Items", arena.getItems());
+        // Items
+        data = new ArrayList<>();
+        for(Item item : arena.getItems()) {
+            data.add(PlainTextComponentSerializer.plainText().serialize(item.getItem().displayName()));
+        }
+        getConfig().set(arenaname + ".Items", data);
+
+        for(int i = 0; i < arena.getItems().size(); i++) {
+            getConfig().set(arenaname + ".Items." + data.get(i) + ".Item", arena.getItems().get(i).getItem());
+            getConfig().set(arenaname + ".Items." + data.get(i) + ".Team", arena.getItems().get(i).getTeam());
+            getConfig().set(arenaname + ".Items." + data.get(i) + ".Chance", arena.getItems().get(i).getChance());
+            getConfig().set(arenaname + ".Items." + data.get(i) + ".IsCurrency", arena.getItems().get(i).isCurrency());
+        }
+
         getConfig().set(arenaname + ".Spawns", arena.getSpawns());
         getConfig().set(arenaname + ".Objectives", arena.getObjectives());
         getConfig().set(arenaname + ".Storage", arena.getStorage());
@@ -96,7 +112,14 @@ public class ArenasConfig {
             }
         }
 
-        List<ItemStack> items = new ArrayList<>();
+        List<Item> items = new ArrayList<>();
+        if(config.getConfigurationSection(arena + ".Items") != null) {
+            for(String key : config.getConfigurationSection(arena + ".Items").getKeys(false)) {
+                items.add(new Item(getConfig().getItemStack(arena + ".Items." + key + ".Item"), getConfig().getString(arena + ".Items." + key + ".Team"),
+                        getConfig().getInt(arena + ".Items." + key + ".Chance"), getConfig().getBoolean(arena + ".Items." + key + ".Chance")));
+            }
+        }
+
         List<Spawn> spawns = new ArrayList<>();
         List<Objective> objectives = new ArrayList<>();
         List<Storage> storage = new ArrayList<>();

@@ -93,7 +93,7 @@ public class TeamListGUI implements NerdGUI {
         });
 
         StaticPane nonPageButton = new StaticPane(3, 4, 3, 1, Pane.Priority.HIGH);
-        nonPageButton.addItem(new GuiItem(createButton(Material.LIME_WOOL, "Add new...", "#FFFFFF"), inventoryClickEvent -> {
+        nonPageButton.addItem(new GuiItem(createButton(Material.RED_WOOL, "Back", "#FFFFFF"), inventoryClickEvent -> {
             backgui.displayGUI();
         }), Slot.fromIndex(0));
         nonPageButton.addItem(new GuiItem(createButton(Material.NAME_TAG, "Add new...", "#FFFFFF"), inventoryClickEvent -> {

@@ -6,7 +6,7 @@
 
     <groupId>me.ppgome.nerdminigames</groupId>
     <artifactId>NerdMinigames</artifactId>
-    <version>0.0.1 Pre-alpha</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <name>NerdMinigames</name>

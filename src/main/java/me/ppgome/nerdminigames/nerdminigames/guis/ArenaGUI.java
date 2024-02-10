@@ -66,8 +66,7 @@ public class ArenaGUI implements NerdGUI {
                 }), 1, 0);
         buttons.addItem(new GuiItem(createButton(Material.CHEST, "Items", "#ffffff"),
                 inventoryClickEvent -> {
-            // TODO FIX THIS
-//                    new ItemListGUI().displayGUI();
+                    new ItemListGUI(player, this, arena).displayGUI();
                 }), 2, 1);
         buttons.addItem(new GuiItem(createButton(Material.EXPERIENCE_BOTTLE, "Objectives", "#ffffff"),
                 inventoryClickEvent -> {

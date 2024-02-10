@@ -4,6 +4,9 @@ import com.sk89q.worldedit.math.BlockVector3;
 import it.unimi.dsi.fastutil.Hash;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
@@ -22,7 +25,7 @@ public class Arena {
     private String world;
     private HashMap<String, Integer> boundaries = new HashMap<>();
     private List<Team> teams = new ArrayList<>();
-    private List<ItemStack> items = new ArrayList<>();
+    private List<Item> items = new ArrayList<>();
     private List<Spawn> spawns = new ArrayList<>();
     private List<Objective> objectives = new ArrayList<>();
     private List<Storage> storage = new ArrayList<>();
@@ -41,7 +44,7 @@ public class Arena {
     }
 
     public Arena(String arenaName, String owner, String world, HashMap<String, Integer> boundaries, List<Team> teams,
-                 List<ItemStack> items, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage, List<Armour> armour) {
+                 List<Item> items, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage, List<Armour> armour) {
         this.arenaName = arenaName;
         this.owner = owner;
         this.world = world;
@@ -116,12 +119,27 @@ public class Arena {
         this.teams.remove(team);
     }
 
-    public List<ItemStack> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 
-    public void setItems(List<ItemStack> items) {
+    public Item getItemByItem(ItemStack checkItem) {
+        for(Item item : getItems()) {
+            System.out.println(item.getItem());
+            if(item.getItem().isSimilar(checkItem)) {
+                return item;
+            }
+        }
+        System.out.println("No result");
+        return null;
+    }
+
+    public void setItems(List<Item> items) {
         this.items = items;
+    }
+
+    public void deleteItem(Item item) {
+        this.items.remove(item);
     }
 
     public List<Spawn> getSpawns() {
