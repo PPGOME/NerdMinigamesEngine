@@ -27,13 +27,13 @@ import static me.ppgome.nerdminigames.nerdminigames.messages.PlayerMessager.erro
 
 public class ItemCreationGUI implements NerdGUI {
 
-    private Player player;
-    private Arena arena;
+    private final Player player;
+    private final Arena arena;
     private DataInputGUI teamInput;
     private Team team;
     private DataInputGUI chance;
     private boolean isCurrency = false;
-    private NerdGUI backgui;
+    private final NerdGUI backgui;
     private ItemStack itemStack;
     private Item item;
     private ChestGui gui;
@@ -114,26 +114,57 @@ public class ItemCreationGUI implements NerdGUI {
         }), Slot.fromIndex(21 + nudge));
 
         // Currency
-        // TODO this.
-        ToggleButton currency = new ToggleButton(Slot.fromIndex(23 + nudge), 1, 1);
-        currency.setEnabledItem(new GuiItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20")));
-        currency.setDisabledItem(new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#b5ff20")));
+        GuiItem currencybutton = new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"), NerdMinigames.getPlugin());
 
-        if(checkIfCurrency()) {
-            if(!currency.isEnabled()) {
-                currency.toggle();
-            }
-        } else if(currency.isEnabled()) {
-            currency.toggle();
-        }
-
-        currency.setOnClick(e -> {
-            if(checkIfCurrency()) {
-                currency.allowToggle(false);
-            } else {
-                currency.toggle();
+        currencybutton.setAction(inventoryClickEvent -> {
+            System.out.println("A");
+            if (!checkIfCurrency(item)) {
+                System.out.println("B");
+                if (isCurrency) {
+                    System.out.println("C");
+                    isCurrency = false;
+                    currencybutton.setItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"));
+                    gui.update();
+                } else {
+                    System.out.println("D");
+                    isCurrency = true;
+                    currencybutton.setItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20"));
+                    gui.update();
+                }
             }
         });
+
+        if(item != null) {
+            if(item.isCurrency()) {
+                currencybutton.setItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20"));
+                isCurrency = true;
+            } else {
+                currencybutton.setItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"));
+            }
+        }
+
+        buttons.addItem(currencybutton, Slot.fromIndex(23 + nudge));
+
+        // TODO this.
+//        ToggleButton currency = new ToggleButton(0, 3, 1, 1);
+//        currency.setEnabledItem(new GuiItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20")));
+//        currency.setDisabledItem(new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#b5ff20")));
+
+//        if(checkIfCurrency()) {
+//            if(!currency.isEnabled()) {
+//                currency.toggle();
+//            }
+//        } else if(currency.isEnabled()) {
+//            currency.toggle();
+//        }
+//
+//        currency.setOnClick(e -> {
+//            if(checkIfCurrency()) {
+//                currency.allowToggle(false);
+//            } else {
+//                currency.toggle();
+//            }
+//        });
 
 //        buttons.addItem(new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: " + isCurrency, "#b5ff20")
 //                , inventoryClickEvent -> {
@@ -146,7 +177,7 @@ public class ItemCreationGUI implements NerdGUI {
         if (item != null) {
             buttons.addItem(new GuiItem(createButton(Material.BARRIER, "Delete Item", "#ff5151"), inventoryClickEvent -> {
 
-                String itemname = PlainTextComponentSerializer.plainText().serialize(item.getItem().displayName());;
+                String itemname = PlainTextComponentSerializer.plainText().serialize(item.getItem().displayName());
                 if(itemname.substring(0, 1).equalsIgnoreCase("[") && itemname.substring(itemname.length() - 1).equalsIgnoreCase("]")) {
                     itemname = itemname.substring(1, itemname.length() - 1);
                 }
@@ -185,15 +216,15 @@ public class ItemCreationGUI implements NerdGUI {
 
     }
 
-    private boolean checkIfCurrency() {
+    private boolean checkIfCurrency(Item itemtocheck) {
         for(Item item : arena.getItems()) {
             if(item.isCurrency()) {
-                if(item != null) {
                     if(!item.isCurrency()) {
-                        errorMessage(player.getName(), "This arena already has an item assigned as its currency. Toggle the other item first!");
-                        return true;
+                        if(!item.equals(itemtocheck)) {
+                            errorMessage(player.getName(), "This arena already has an item assigned as its currency. Toggle the other item first!");
+                            return true;
+                        }
                     }
-                }
             }
         }
         return false;

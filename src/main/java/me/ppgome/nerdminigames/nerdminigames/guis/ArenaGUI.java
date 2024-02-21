@@ -20,9 +20,9 @@ import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
 public class ArenaGUI implements NerdGUI {
 
-    private Player player;
-    private Arena arena;
-    private NerdGUI backgui;
+    private final Player player;
+    private final Arena arena;
+    private final NerdGUI backgui;
 
     public ArenaGUI(Player player, Arena arena, NerdGUI backgui) {
         this.player = player;

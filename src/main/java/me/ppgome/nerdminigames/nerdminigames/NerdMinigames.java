@@ -2,6 +2,7 @@ package me.ppgome.nerdminigames.nerdminigames;
 
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
+import me.ppgome.nerdminigames.nerdminigames.NPCs.Bank;
 import me.ppgome.nerdminigames.nerdminigames.arenabuilder.CreationCommands;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import me.ppgome.nerdminigames.nerdminigames.data.Item;
@@ -38,12 +39,16 @@ public final class NerdMinigames extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
+        System.out.println("AHAHAHAHAH");
+
         instance = this;
 
         saveDefaultConfig();
 
         // Check if arenas file exists. If no create it.
         File arenaconfigfile = new File(getDataFolder(), "arenas.yml");
+
+        getServer().getPluginManager().registerEvents(new Bank(), this);
 
         if(!arenaconfigfile.exists()) {
             arenaconfigfile.getParentFile().mkdirs();
@@ -58,7 +63,7 @@ public final class NerdMinigames extends JavaPlugin {
         testmeta.addEnchant(Enchantment.DURABILITY, 3, false);
         test.setItemMeta(testmeta);
 
-        Arena arena = arenaconfig.getArena("BOOBS");
+        Arena arena = arenaconfig.getArena("TestArena");
 
         ItemStack item = new ItemStack(Material.LIME_WOOL);
         ItemMeta itemMeta = item.getItemMeta();

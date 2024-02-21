@@ -21,9 +21,9 @@ import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.isInteger;
 public class TeamCreationGUI implements NerdGUI {
 
     private Team team;
-    private Player player;
-    private Arena arena;
-    private NerdGUI backgui;
+    private final Player player;
+    private final Arena arena;
+    private final NerdGUI backgui;
     private DataInputGUI teamName;
     private DataInputGUI maxPlayers;
     private DataInputGUI minPlayers;

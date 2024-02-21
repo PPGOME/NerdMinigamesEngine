@@ -14,9 +14,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 public class DataInputGUI extends InputGUI implements NerdGUI{
 
-    private Player player;
+    private final Player player;
     private String guiname = "";
-    private NerdGUI backgui;
+    private final NerdGUI backgui;
     private String input = "";
 
     public DataInputGUI(Player player, String guiname, NerdGUI backgui) {

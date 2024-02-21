@@ -28,9 +28,9 @@ public class TeamListGUI implements NerdGUI {
 
     //TODO If GUI is null when back button pressed, close GUI completely
 
-    private Player player;
-    private NerdGUI backgui;
-    private Arena arena;
+    private final Player player;
+    private final NerdGUI backgui;
+    private final Arena arena;
     private List<ItemStack> itemlist = new ArrayList<>();
 
     public TeamListGUI(Player player, NerdGUI backgui, Arena arena) {

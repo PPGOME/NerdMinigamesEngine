@@ -24,9 +24,9 @@ import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
 public class ItemListGUI implements NerdGUI {
 
-    private Player player;
-    private NerdGUI backgui;
-    private Arena arena;
+    private final Player player;
+    private final NerdGUI backgui;
+    private final Arena arena;
     private List<ItemStack> itemlist = new ArrayList<>();
 
     public ItemListGUI(Player player, NerdGUI backgui, Arena arena) {

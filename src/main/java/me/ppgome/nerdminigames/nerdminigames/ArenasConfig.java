@@ -14,10 +14,10 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class ArenasConfig {
-    private File file;
-    private FileConfiguration config;
+    private final File file;
+    private final FileConfiguration config;
     private NerdMinigames plugin;
-    private final List<String> emptylist = Collections.<String> emptyList();
+    private final List<String> emptylist = Collections.emptyList();
     private final List<String> arenas = new ArrayList<String>();
 
     public ArenasConfig(NerdMinigames plugin) {
@@ -116,7 +116,7 @@ public class ArenasConfig {
         if(config.getConfigurationSection(arena + ".Items") != null) {
             for(String key : config.getConfigurationSection(arena + ".Items").getKeys(false)) {
                 items.add(new Item(getConfig().getItemStack(arena + ".Items." + key + ".Item"), getConfig().getString(arena + ".Items." + key + ".Team"),
-                        getConfig().getInt(arena + ".Items." + key + ".Chance"), getConfig().getBoolean(arena + ".Items." + key + ".Chance")));
+                        getConfig().getInt(arena + ".Items." + key + ".Chance"), getConfig().getBoolean(arena + ".Items." + key + ".IsCurrency")));
             }
         }
 
@@ -160,7 +160,6 @@ public class ArenasConfig {
     public List<String> getArenas() {
         ConfigurationSection configsec = getConfig().getConfigurationSection("");
         for(String key : configsec.getKeys(false)) {
-            Bukkit.getLogger().log(Level.SEVERE, key);
             arenas.add(key.toUpperCase(Locale.ROOT));
         }
         return arenas;
