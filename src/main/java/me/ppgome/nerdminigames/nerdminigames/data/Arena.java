@@ -31,6 +31,8 @@ public class Arena {
     private List<Storage> storage = new ArrayList<>();
     private List<Armour> armour = new ArrayList<>();
 
+    private int currencyrate;
+
     public Arena(String arenaName, Player owner, String world, BlockVector3 corner1, BlockVector3 corner2) {
         this.arenaName = arenaName;
         this.owner = owner.getUniqueId().toString();
@@ -41,10 +43,12 @@ public class Arena {
         this.boundaries.put("x2", corner2.getX());
         this.boundaries.put("y2", corner2.getY());
         this.boundaries.put("z2", corner2.getZ());
+        this.currencyrate = 16;
     }
 
     public Arena(String arenaName, String owner, String world, HashMap<String, Integer> boundaries, List<Team> teams,
-                 List<Item> items, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage, List<Armour> armour) {
+                 List<Item> items, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage, List<Armour> armour,
+                 int currencyrate) {
         this.arenaName = arenaName;
         this.owner = owner;
         this.world = world;
@@ -52,6 +56,7 @@ public class Arena {
         this.teams = teams;
         this.items = items;
         this.spawns = spawns;
+        this.currencyrate = currencyrate;
     }
 
     public String getArenaName() {
@@ -173,4 +178,13 @@ public class Arena {
     public void setArmour(List<Armour> armour) {
         this.armour = armour;
     }
+
+    public void setCurrencyrate(int rate) {
+        this.currencyrate = rate;
+    }
+
+    public int getCurrencyrate() {
+        return this.currencyrate;
+    }
+
 }

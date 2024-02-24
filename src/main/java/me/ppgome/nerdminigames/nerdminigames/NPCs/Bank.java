@@ -5,6 +5,7 @@ import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import me.ppgome.nerdminigames.nerdminigames.data.Item;
 import net.citizensnpcs.api.event.NPCLeftClickEvent;
+import net.citizensnpcs.api.event.NPCRightClickEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -23,7 +24,7 @@ import java.util.List;
 public class Bank implements Listener {
 
     @EventHandler
-    public void onTellerClick(NPCLeftClickEvent e) {
+    public void onTellerLeftClick(NPCLeftClickEvent e) {
         Player p = e.getClicker();
         List<Arena> arenas = new ArrayList<>();
         ArenasConfig config = new ArenasConfig(NerdMinigames.getPlugin());
@@ -46,7 +47,7 @@ public class Bank implements Listener {
                         System.out.println(handitem.getAmount());
                         System.out.println(item.getItem().getAmount());
 
-                        int rate = (int) Math.floor(handitem.getAmount() / item.getItem().getAmount());
+                        int rate = (int) Math.floor(handitem.getAmount() / arena.getCurrencyrate());
 
                         System.out.println(rate);
 
@@ -80,6 +81,16 @@ public class Bank implements Listener {
             }
         }
 
+    }
+
+    @EventHandler
+    public void onTellerRightClick(NPCRightClickEvent e) {
+        Player p = e.getClicker();
+        if(p.isSneaking()) {
+            if(p.hasPermission("nerdmg.admin")) {
+
+            }
+        }
     }
 
 }

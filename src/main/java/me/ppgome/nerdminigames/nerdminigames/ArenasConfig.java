@@ -16,13 +16,11 @@ import java.util.logging.Level;
 public class ArenasConfig {
     private final File file;
     private final FileConfiguration config;
-    private NerdMinigames plugin;
     private final List<String> emptylist = Collections.emptyList();
     private final List<String> arenas = new ArrayList<String>();
 
     public ArenasConfig(NerdMinigames plugin) {
         this(plugin.getDataFolder().getAbsolutePath() + "/arenas.yml");
-        this.plugin = plugin;
     }
 
     public ArenasConfig(String path) {
@@ -41,14 +39,11 @@ public class ArenasConfig {
     }
 
     public void editArena(Arena arena) {
-        System.out.println("c");
         String arenaname = arena.getArenaName().toUpperCase(Locale.ROOT);
-        System.out.println(arenaname);
         if(arena.getArenaName().toUpperCase(Locale.ROOT).substring(0, 2).equalsIgnoreCase("§F")) {
             arenaname = arenaname.substring(2);
             System.out.println("this is the " + arenaname);
         }
-        System.out.println("d");
         getConfig().set(arenaname + ".Owner", arena.getOwner());
         getConfig().set(arenaname + ".World", arena.getWorld());
         getConfig().set(arenaname + ".Boundaries", arena.getBoundaries());
@@ -81,6 +76,8 @@ public class ArenasConfig {
             getConfig().set(arenaname + ".Items." + data.get(i) + ".Chance", arena.getItems().get(i).getChance());
             getConfig().set(arenaname + ".Items." + data.get(i) + ".IsCurrency", arena.getItems().get(i).isCurrency());
         }
+
+        getConfig().set(arenaname + ".Currency.Rate", arena.getCurrencyrate());
 
         getConfig().set(arenaname + ".Spawns", arena.getSpawns());
         getConfig().set(arenaname + ".Objectives", arena.getObjectives());
@@ -125,12 +122,17 @@ public class ArenasConfig {
         List<Storage> storage = new ArrayList<>();
         List<Armour> armour = new ArrayList<>();
 
-        return new Arena(arena, owner, world, boundaries, teams, items, spawns, objectives, storage, armour);
+        int currencyrate = 16;
+        if(config.getConfigurationSection(arena + ".Currency") != null) {
+            currencyrate = getConfig().getInt(arena + ".Currency.Rate");
+        }
+
+        return new Arena(arena, owner, world, boundaries, teams, items, spawns, objectives, storage, armour, currencyrate);
     }
 
     public void addTeam(String arena, String team) {
         List<String> teams = getTeams(arena);
-        if(!teams.stream().anyMatch(e -> e.equalsIgnoreCase(team))) {
+        if(teams.stream().noneMatch(e -> e.equalsIgnoreCase(team))) {
             teams.add(team);
             getConfig().set(arena + ".Teams", teams);
             save();

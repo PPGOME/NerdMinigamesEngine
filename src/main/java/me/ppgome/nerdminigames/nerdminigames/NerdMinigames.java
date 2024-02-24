@@ -35,6 +35,18 @@ public final class NerdMinigames extends JavaPlugin {
 
     }
 
+    /*
+    Plugin Standards
+    ----------------
+
+    Permissions:
+        - All permissions must follow nerdmg.*
+        - There are 2 major permissions:
+            - nerdmg.player grants permission to access games
+            - nerdmg.mod grants permissions to create and edit arenas.
+            - nerdmg.admin grants permissions to the entire plugin, including currency modification
+     */
+
     @Override
     public void onEnable() {
         // Plugin startup logic
@@ -53,6 +65,12 @@ public final class NerdMinigames extends JavaPlugin {
         if(!arenaconfigfile.exists()) {
             arenaconfigfile.getParentFile().mkdirs();
             saveResource("arenas.yml", false);
+        }
+
+        File currencyconfigfile = new File(getDataFolder(), "currency.yml");
+        if(!currencyconfigfile.exists()) {
+            currencyconfigfile.getParentFile().mkdirs();
+            saveResource("currency.yml", false);
         }
 
         ArenasConfig arenaconfig = new ArenasConfig(instance);
