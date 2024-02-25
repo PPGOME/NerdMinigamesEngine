@@ -12,6 +12,10 @@ public class ExternalCurrency {
         this.rate = rate;
     }
 
+    public void setRate(int rate) {
+        this.rate = rate;
+    }
+
     public ItemStack getItem() {
         return item;
     }

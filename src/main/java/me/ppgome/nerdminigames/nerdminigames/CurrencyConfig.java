@@ -11,13 +11,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.ppgome.nerdminigames.nerdminigames.Utils.removeBrackets;
+
 public class CurrencyConfig {
 
     private final File file;
     private final FileConfiguration config;
 
     public CurrencyConfig(NerdMinigames plugin) {
-        this(plugin.getDataFolder().getAbsolutePath() + "/arenas.yml");
+        this(plugin.getDataFolder().getAbsolutePath() + "/currency.yml");
     }
 
     public CurrencyConfig(String path) {
@@ -26,12 +28,9 @@ public class CurrencyConfig {
     }
 
     public void addCurrency(ItemStack item, int rate) {
-        String currencyname = PlainTextComponentSerializer.plainText().serialize(item.displayName());
-        if(currencyname.substring(0, 1).equalsIgnoreCase("[") && currencyname.substring(currencyname.length() - 1).equalsIgnoreCase("]")) {
-            currencyname = currencyname.substring(1, currencyname.length() - 1);
-        }
-        getConfig().set(currencyname + ".Item", item);
-        getConfig().set(currencyname + ".Rate", rate);
+        String itemname = removeBrackets(item.displayName());
+        getConfig().set(itemname + ".Item", item);
+        getConfig().set(itemname + ".Rate", rate);
     }
 
     public List<ExternalCurrency> getCurrencies() {
@@ -43,6 +42,15 @@ public class CurrencyConfig {
             }
         }
         return items;
+    }
+
+    public ExternalCurrency getCurrencyByName(String name) {
+        for(ExternalCurrency currency : getCurrencies()) {
+            if(removeBrackets(currency.getItem().displayName()).equalsIgnoreCase(name)) {
+                return currency;
+            }
+        }
+        return null;
     }
 
     public void deleteCurrency(ItemStack item) {

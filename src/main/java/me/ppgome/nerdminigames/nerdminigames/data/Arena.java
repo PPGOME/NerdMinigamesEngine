@@ -143,6 +143,10 @@ public class Arena {
         this.items = items;
     }
 
+    public void addItem(Item item) {
+        this.items.add(item);
+    }
+
     public void deleteItem(Item item) {
         this.items.remove(item);
     }

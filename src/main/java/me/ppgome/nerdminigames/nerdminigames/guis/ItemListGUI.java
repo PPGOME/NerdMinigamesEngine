@@ -81,7 +81,6 @@ public class ItemListGUI implements NerdGUI {
             String itemname = PlainTextComponentSerializer.plainText().serialize(inventoryClickEvent.getCurrentItem().displayName());
             if(!itemname.equalsIgnoreCase("")) {
                 ItemStack item = inventoryClickEvent.getCurrentItem();
-                System.out.println(item);
                 new ItemCreationGUI(player, arena, arena.getItemByItem(item), this).displayGUI();
             }
         });

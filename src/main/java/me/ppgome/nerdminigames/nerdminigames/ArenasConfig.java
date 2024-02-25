@@ -86,7 +86,7 @@ public class ArenasConfig {
         save();
     }
 
-    public Arena getArena(String arenaName) {
+    public Arena getArenaByName(String arenaName) {
         String arena = arenaName;
         if(arena.toUpperCase(Locale.ROOT).substring(0, 2).equalsIgnoreCase("§F")) {
             arena = arenaName.toUpperCase().substring(2);

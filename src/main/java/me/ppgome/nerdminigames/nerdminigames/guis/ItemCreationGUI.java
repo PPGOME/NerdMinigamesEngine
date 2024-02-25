@@ -7,6 +7,7 @@ import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.component.ToggleButton;
 import com.github.stefvanschie.inventoryframework.pane.util.Slot;
+import io.papermc.paper.advancement.AdvancementDisplay;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
@@ -16,6 +17,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
@@ -83,7 +85,57 @@ public class ItemCreationGUI implements NerdGUI {
 
         // Confirm
         buttons.addItem(new GuiItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Confirm", "#b5ff20"), inventoryClickEvent -> {
-            //TODO logic (TEAM IS OPTIONAL)
+            ArenasConfig arenasConfig = new ArenasConfig(NerdMinigames.getPlugin());
+            if(item == null) {
+                if(chance != null && isInteger(chance.getInput())) {
+                    int chanceinput = Integer.parseInt(chance.getInput());
+                    if(chanceinput >= 0 && chanceinput <= 100) {
+                        if(itemStack != null) {
+                            if(teamInput != null) {
+                                for(Team team : arena.getTeams()) {
+                                    if(team.getTeamName().equalsIgnoreCase(teamInput.getInput())) {
+                                        NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
+                                        ItemMeta itemMeta = itemStack.getItemMeta();
+                                        itemMeta.getPersistentDataContainer().remove(key);
+                                        itemStack.setItemMeta(itemMeta);
+                                        arena.addItem(new Item(itemStack, teamInput.getInput(), chanceinput, isCurrency));
+                                        arenasConfig.editArena(arena);
+                                        backgui.displayGUI();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                for(Item itemtocheck : arena.getItems()) {
+                    if(itemtocheck.equals(item)) {
+                        if(itemStack != null) {
+                            itemtocheck.setItem(itemStack);
+                        }
+                        if(teamInput != null) {
+                            for(Team team : arena.getTeams()) {
+                                if(team.getTeamName().equalsIgnoreCase(teamInput.getInput())) {
+                                    itemtocheck.setTeam(teamInput.getInput());
+                                }
+                            }
+                        }
+                        if(chance != null) {
+                            if(isInteger(chance.getInput())) {
+                                itemtocheck.setChance(Integer.parseInt(chance.getInput()));
+                            }
+                        }
+                        itemtocheck.setCurrency(isCurrency);
+                        NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
+                        ItemMeta itemMeta = itemtocheck.getItem().getItemMeta();
+                        itemMeta.getPersistentDataContainer().remove(key);
+                        itemtocheck.getItem().setItemMeta(itemMeta);
+                        arenasConfig.editArena(arena);
+                        backgui.displayGUI();
+                    }
+                }
+
+            }
         }), Slot.fromIndex(6));
 
         // Team
@@ -114,36 +166,49 @@ public class ItemCreationGUI implements NerdGUI {
         }), Slot.fromIndex(21 + nudge));
 
         // Currency
-        GuiItem currencybutton = new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"), NerdMinigames.getPlugin());
-
-        currencybutton.setAction(inventoryClickEvent -> {
-            System.out.println("A");
-            if (!checkIfCurrency(item)) {
-                System.out.println("B");
-                if (isCurrency) {
-                    System.out.println("C");
-                    isCurrency = false;
-                    currencybutton.setItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"));
-                    gui.update();
-                } else {
-                    System.out.println("D");
-                    isCurrency = true;
-                    currencybutton.setItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20"));
-                    gui.update();
-                }
-            }
-        });
-
         if(item != null) {
-            if(item.isCurrency()) {
-                currencybutton.setItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20"));
-                isCurrency = true;
-            } else {
-                currencybutton.setItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"));
+            isCurrency = item.isCurrency();
+        }
+        boolean othercurrency = false;
+        for(Item itemtocheck : arena.getItems()) {
+            if(itemtocheck.isCurrency()) {
+                if(itemtocheck.equals(item)) {
+                    break;
+                }
+                othercurrency = true;
+                break;
             }
         }
 
-        buttons.addItem(currencybutton, Slot.fromIndex(23 + nudge));
+        if(othercurrency) {
+            buttons.addItem(new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Arena already has a currency!",
+                    "#ff5151")), Slot.fromIndex(23 + nudge));
+        } else {
+            GuiItem currencybutton = new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"), NerdMinigames.getPlugin());
+
+            currencybutton.setAction(inventoryClickEvent -> {
+                if (!checkIfCurrency(item)) {
+                    if (isCurrency) {
+                        isCurrency = false;
+                        currencybutton.setItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"));
+                        gui.update();
+                    } else {
+                        isCurrency = true;
+                        currencybutton.setItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20"));
+                        gui.update();
+                    }
+                }
+            });
+            if(item != null) {
+                if(item.isCurrency()) {
+                    currencybutton.setItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Is arena's currency: true", "#b5ff20"));
+                    isCurrency = true;
+                } else {
+                    currencybutton.setItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"));
+                }
+            }
+            buttons.addItem(currencybutton, Slot.fromIndex(23 + nudge));
+        }
 
         // TODO this.
 //        ToggleButton currency = new ToggleButton(0, 3, 1, 1);
@@ -191,11 +256,13 @@ public class ItemCreationGUI implements NerdGUI {
         if(item != null) {
             buttons.addItem(new GuiItem(item.getItem()), Slot.fromIndex(4));
         }
+        if(itemStack != null) {
+            buttons.addItem(new GuiItem(itemStack), Slot.fromIndex(4));
+        }
         StaticPane inventory = new StaticPane(0, 5, 9, 4, Pane.Priority.HIGHEST);
         inventory.setOnClick(e -> {
             itemStack = e.getCurrentItem();
             if (itemStack != null) {
-                System.out.println(itemStack.displayName());
                 buttons.addItem(new GuiItem(itemStack), Slot.fromIndex(4));
                 gui.update();
             }

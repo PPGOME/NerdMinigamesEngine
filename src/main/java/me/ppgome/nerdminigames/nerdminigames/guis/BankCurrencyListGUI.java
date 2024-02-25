@@ -19,9 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
+import static me.ppgome.nerdminigames.nerdminigames.Utils.removeBrackets;
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
 public class BankCurrencyListGUI implements NerdGUI {
@@ -32,6 +32,7 @@ public class BankCurrencyListGUI implements NerdGUI {
 
     List<ItemStack> itemlist;
     DataInputGUI rateinput;
+    ExternalCurrency externalCurrency;
 
     public BankCurrencyListGUI(Player player) {
         this.player = player;
@@ -63,14 +64,20 @@ public class BankCurrencyListGUI implements NerdGUI {
         body.setRepeat(true);
 
         for(String checkarenastr : arenaconfig.getArenas()) {
-            for(Item checkcurrency : arenaconfig.getArena(checkarenastr).getItems()) {
+            for(Item checkcurrency : arenaconfig.getArenaByName(checkarenastr).getItems()) {
                 if(checkcurrency.isCurrency()) {
+                    System.out.println(checkcurrency.getTeam() + "i");
                     itemlist.add(checkcurrency.getItem());
                 }
-            } for(ExternalCurrency externalCurrency : currencyConfig.getCurrencies()) {
-                itemlist.add(externalCurrency.getItem());
             }
         }
+
+        for(ExternalCurrency externalCurrency : currencyConfig.getCurrencies()) {
+            System.out.println("a");
+            itemlist.add(externalCurrency.getItem());
+        }
+
+        System.out.println(itemlist);
 
         pages.populateWithItemStacks(itemlist);
 
@@ -92,6 +99,23 @@ public class BankCurrencyListGUI implements NerdGUI {
             String itemname = PlainTextComponentSerializer.plainText().serialize(clicc.getCurrentItem().displayName());
             if(!clicc.getCurrentItem().isSimilar(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)) &&
                     !itemname.equalsIgnoreCase("")) {
+                for(ExternalCurrency currency : currencyConfig.getCurrencies()) {
+                    System.out.println(removeBrackets(currency.getItem().displayName()));
+                    System.out.println(itemname);
+                    if(removeBrackets(currency.getItem().displayName()).equalsIgnoreCase(itemname)) {
+                        rateinput = new DataInputGUI(player, "Change " + itemname + "'s exchange rate", backgui);
+                        rateinput.displayGUI();
+                    }
+                }
+                for(String arena : arenaconfig.getArenas()) {
+                    for(Item item : arenaconfig.getArenaByName(arena).getItems()) {
+                        if(item.isCurrency() && removeBrackets(item.getItem().displayName()).equalsIgnoreCase(itemname)) {
+                            rateinput = new DataInputGUI(player, "Change " + itemname + "'s exchange rate", backgui);
+                            rateinput.displayGUI();
+                        }
+                    }
+                }
+//                player.getInventory().addItem(currencyConfig.getCurrencyByName(itemname).getItem());
                 // TODO :)
             }
         });
@@ -100,5 +124,7 @@ public class BankCurrencyListGUI implements NerdGUI {
         gui.addPane(body);
         gui.addPane(pages);
         gui.addPane(buttons);
+
+        gui.show(player);
     }
 }

@@ -75,31 +75,31 @@ public final class NerdMinigames extends JavaPlugin {
 
         ArenasConfig arenaconfig = new ArenasConfig(instance);
 
-        ItemStack test = new ItemStack(Material.STRING);
-        ItemMeta testmeta = test.getItemMeta();
-        testmeta.displayName(Component.text("Strong"));
-        testmeta.addEnchant(Enchantment.DURABILITY, 3, false);
-        test.setItemMeta(testmeta);
-
-        Arena arena = arenaconfig.getArena("TestArena");
-
-        ItemStack item = new ItemStack(Material.LIME_WOOL);
-        ItemMeta itemMeta = item.getItemMeta();
-        itemMeta.addEnchant(Enchantment.ARROW_INFINITE, 10, true);
-        itemMeta.displayName(Component.text("IamANitem"));
-        item.setItemMeta(itemMeta);
-
-        System.out.println(PlainTextComponentSerializer.plainText().serialize(item.displayName()));
-
-        Team team = arena.getTeamByName("abc");
-
-        Item itemdata = new Item(item, team.getTeamName(), 100, false);
-
-        List<Item> items = new ArrayList<>();
-        items.add(itemdata);
-        arena.setItems(items);
-
-        arenaconfig.editArena(arena);
+//        ItemStack test = new ItemStack(Material.STRING);
+//        ItemMeta testmeta = test.getItemMeta();
+//        testmeta.displayName(Component.text("Strong"));
+//        testmeta.addEnchant(Enchantment.DURABILITY, 3, false);
+//        test.setItemMeta(testmeta);
+//
+//        Arena arena = arenaconfig.getArena("TestArena");
+//
+//        ItemStack item = new ItemStack(Material.LIME_WOOL);
+//        ItemMeta itemMeta = item.getItemMeta();
+//        itemMeta.addEnchant(Enchantment.ARROW_INFINITE, 10, true);
+//        itemMeta.displayName(Component.text("IamANitem"));
+//        item.setItemMeta(itemMeta);
+//
+//        System.out.println(PlainTextComponentSerializer.plainText().serialize(item.displayName()));
+//
+//        Team team = arena.getTeamByName("abc");
+//
+//        Item itemdata = new Item(item, team.getTeamName(), 100, false);
+//
+//        List<Item> items = new ArrayList<>();
+//        items.add(itemdata);
+//        arena.setItems(items);
+//
+//        arenaconfig.editArena(arena);
 
     }
 
