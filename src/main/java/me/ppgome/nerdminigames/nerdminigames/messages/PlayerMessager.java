@@ -26,4 +26,13 @@ public class PlayerMessager {
                                     .color(TextColor.fromHexString(config.getString("messages.error.color.message"))))));
         }
     }
+
+    public static void infoMessage(Player player, String message) {
+        if(player != null && player.isOnline()) {
+            player.sendMessage(Component.text("[").color(TextColor.fromHexString("#5555FF"))
+                    .append(Component.text(config.getString("messages.prefix.text")).color(TextColor.fromHexString("#ffc820")))
+                    .append(Component.text("]")).color(TextColor.fromHexString("#5555FF"))
+                    .append(Component.text(message).color(TextColor.fromHexString("#ffc820"))));
+        }
+    }
 }

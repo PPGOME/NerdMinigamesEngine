@@ -22,6 +22,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.ppgome.nerdminigames.nerdminigames.Utils.removeBrackets;
+
 public class Bank implements Listener {
 
     @EventHandler
@@ -38,19 +40,13 @@ public class Bank implements Listener {
         for(Arena arena : arenas) {
             for(Item item : arena.getItems()) {
                 if(item.isCurrency()) {
-                    int handamount = handitem.getAmount();
-                    if(handamount > 1) handitem.setAmount(1);
                     p.getInventory().addItem(item.getItem());
-                    System.out.println(item.getItem());
-                    System.out.println(handitem);
                     if(item.getItem().isSimilar(handitem)) {
-                        System.out.println("MATCH.");
-                        System.out.println(handamount);
-                        System.out.println(item.getItem().getAmount());
 
-                        int rate = (int) Math.floor(handamount / arena.getCurrencyrate());
+                        System.out.println(handitem);
+                        System.out.println(item.getItem());
 
-                        System.out.println(rate);
+                        int rate = (int) Math.floor(handitem.getAmount() / arena.getCurrencyrate());
 
                         if(rate > 0) {
                             p.sendMessage(Component.text("[")
@@ -59,10 +55,10 @@ public class Bank implements Listener {
                                             .color(TextColor.fromHexString("#ff9d3b"))
                                             .append(Component.text("]")
                                                     .color(TextColor.fromHexString("#5555ff"))
-                                                    .append(Component.text(" You exchanged " + rate + " "
-                                                            + PlainTextComponentSerializer.plainText().serialize(handitem.getItemMeta().displayName())
+                                                    .append(Component.text(" You exchanged " + rate * arena.getCurrencyrate() + " "
+                                                            + removeBrackets(handitem.displayName())
                                                             + " for " + rate + " CCoins!").color(TextColor.fromHexString("#feb137"))))));
-                            p.getInventory().getItemInMainHand().setAmount(handitem.getAmount() - rate);
+                            p.getInventory().getItemInMainHand().setAmount(handitem.getAmount() - (rate * arena.getCurrencyrate()));
 
                             //REMOVE
                             ItemStack ccoin = new ItemStack(Material.SUNFLOWER);

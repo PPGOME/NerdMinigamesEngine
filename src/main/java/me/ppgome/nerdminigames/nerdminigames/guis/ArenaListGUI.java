@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.ppgome.nerdminigames.nerdminigames.Utils.removeBrackets;
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
 public class ArenaListGUI implements NerdGUI {
@@ -108,7 +109,8 @@ public class ArenaListGUI implements NerdGUI {
         pages.setOnClick(inventoryClickEvent -> {
             System.out.println(pages.getPage());
             if(!inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName().equals("")) {
-                new ArenaGUI(player, arenaconfig.getArenaByName(inventoryClickEvent.getCurrentItem().getItemMeta().getDisplayName()), this).displayGUI();
+                new ArenaGUI(player, arenaconfig.getArenaByName(removeBrackets(
+                        inventoryClickEvent.getCurrentItem().displayName())), this).displayGUI();
             }
         });
 

@@ -1,23 +1,21 @@
 package me.ppgome.nerdminigames.nerdminigames.data;
 
 import com.sk89q.worldedit.math.BlockVector3;
-import it.unimi.dsi.fastutil.Hash;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
-import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
+/**
+ * The object representing a minigame arena
+ *
+ * @since 0.0.1
+ * @author Keelan Delorme
+ */
 public class Arena {
 
     private String arenaName;
@@ -122,6 +120,11 @@ public class Arena {
 
     public void deleteTeam(Team team) {
         this.teams.remove(team);
+        for(Item item : items) {
+            if(item.getTeam().getTeamName().equalsIgnoreCase(team.getTeamName())) {
+                item.setTeam(null);
+            }
+        }
     }
 
     public List<Item> getItems() {
@@ -155,8 +158,25 @@ public class Arena {
         return spawns;
     }
 
+    public Spawn getSpawnByName(String name) {
+        for(Spawn spawn : this.getSpawns()) {
+            if(spawn.getName().equalsIgnoreCase(name)) {
+                return spawn;
+            }
+        }
+        return null;
+    }
+
     public void setSpawns(List<Spawn> spawns) {
         this.spawns = spawns;
+    }
+
+    public void addSpawn(Spawn spawn) {
+        this.spawns.add(spawn);
+    }
+
+    public void deleteSpawn(Spawn spawn) {
+        this.spawns.remove(spawn);
     }
 
     public List<Objective> getObjectives() {

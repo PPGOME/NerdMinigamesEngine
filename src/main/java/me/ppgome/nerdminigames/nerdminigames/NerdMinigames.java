@@ -7,6 +7,8 @@ import me.ppgome.nerdminigames.nerdminigames.arenabuilder.CreationCommands;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import me.ppgome.nerdminigames.nerdminigames.data.Item;
 import me.ppgome.nerdminigames.nerdminigames.data.Team;
+import me.ppgome.nerdminigames.nerdminigames.guis.NerdGUI;
+import me.ppgome.nerdminigames.nerdminigames.listeners.CreationListeners;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
@@ -19,7 +21,9 @@ import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public final class NerdMinigames extends JavaPlugin {
     private static NerdMinigames instance;
@@ -27,6 +31,8 @@ public final class NerdMinigames extends JavaPlugin {
     public static NerdMinigames getPlugin() {
         return instance;
     }
+
+    private static HashMap<UUID, NerdGUI> pendingInput = new HashMap<>();
 
     @Override
     public void onLoad() {
@@ -60,7 +66,9 @@ public final class NerdMinigames extends JavaPlugin {
         // Check if arenas file exists. If no create it.
         File arenaconfigfile = new File(getDataFolder(), "arenas.yml");
 
+        // Event listeners
         getServer().getPluginManager().registerEvents(new Bank(), this);
+        getServer().getPluginManager().registerEvents(new CreationListeners(), this);
 
         if(!arenaconfigfile.exists()) {
             arenaconfigfile.getParentFile().mkdirs();
@@ -106,5 +114,17 @@ public final class NerdMinigames extends JavaPlugin {
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+    }
+
+    public static HashMap<UUID, NerdGUI> getPendingInput() {
+        return pendingInput;
+    }
+
+    public static void setPendingInput(HashMap<UUID, NerdGUI> pendingInput) {
+        NerdMinigames.pendingInput = pendingInput;
+    }
+
+    public static void addPendingInput(UUID uuid, NerdGUI gui) {
+        pendingInput.put(uuid, gui);
     }
 }

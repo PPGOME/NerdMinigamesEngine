@@ -2,10 +2,12 @@ package me.ppgome.nerdminigames.nerdminigames;
 
 import me.ppgome.nerdminigames.nerdminigames.data.ExternalCurrency;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -27,10 +29,29 @@ public class CurrencyConfig {
         this.config = YamlConfiguration.loadConfiguration(this.file);
     }
 
+    public boolean save() {
+        try {
+            this.config.save(this.file);
+            return true;
+        } catch (Exception e){
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public void addCurrency(ItemStack item, int rate) {
+        NamespacedKey ifuuid = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
+        NamespacedKey arena = new NamespacedKey(NerdMinigames.getPlugin(), "arena");
+        ItemMeta itemMeta = item.getItemMeta();
+        itemMeta.getPersistentDataContainer().remove(ifuuid);
+        if(itemMeta.getPersistentDataContainer().has(arena)) {
+            itemMeta.getPersistentDataContainer().remove(arena);
+        }
+        item.setItemMeta(itemMeta);
         String itemname = removeBrackets(item.displayName());
         getConfig().set(itemname + ".Item", item);
         getConfig().set(itemname + ".Rate", rate);
+        save();
     }
 
     public List<ExternalCurrency> getCurrencies() {

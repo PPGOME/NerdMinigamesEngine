@@ -2,6 +2,7 @@ package me.ppgome.nerdminigames.nerdminigames.arenabuilder;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.IntegerArgument;
 import me.ppgome.nerdminigames.nerdminigames.CurrencyConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
@@ -11,6 +12,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.isInteger;
 
 public class CreationCommands {
 
@@ -24,12 +27,13 @@ public class CreationCommands {
                     }).register();
 
         new CommandAPICommand("addcurrency")
-                // TODO add rate argument & admin permissions
+                .withArguments(new IntegerArgument("rate"))
                 .executes((commandSender, commandArguments) -> {
                     Player p = Bukkit.getPlayer(commandSender.getName());
                     ItemStack item = p.getInventory().getItemInMainHand();
                     if(!item.isSimilar(new ItemStack(Material.AIR))) {
-                        new CurrencyConfig(NerdMinigames.getPlugin()).addCurrency(item, 1);
+                        int rate = (int) commandArguments.get("rate");
+                        new CurrencyConfig(NerdMinigames.getPlugin()).addCurrency(item, rate);
                     }
                 }).register();
     }

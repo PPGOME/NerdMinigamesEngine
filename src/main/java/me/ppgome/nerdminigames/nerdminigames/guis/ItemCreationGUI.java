@@ -92,13 +92,11 @@ public class ItemCreationGUI implements NerdGUI {
                     if(chanceinput >= 0 && chanceinput <= 100) {
                         if(itemStack != null) {
                             if(teamInput != null) {
+                                String teamInputString = teamInput.getInput();
+                                if(teamInputString.equalsIgnoreCase("")) teamInputString = null;
                                 for(Team team : arena.getTeams()) {
-                                    if(team.getTeamName().equalsIgnoreCase(teamInput.getInput())) {
-                                        NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
-                                        ItemMeta itemMeta = itemStack.getItemMeta();
-                                        itemMeta.getPersistentDataContainer().remove(key);
-                                        itemStack.setItemMeta(itemMeta);
-                                        arena.addItem(new Item(itemStack, teamInput.getInput(), chanceinput, isCurrency));
+                                    if(team.getTeamName().equalsIgnoreCase(teamInputString) || teamInputString == null) {
+                                        arena.addItem(new Item(itemStack, arena.getTeamByName(teamInputString), chanceinput, isCurrency));
                                         arenasConfig.editArena(arena);
                                         backgui.displayGUI();
                                     }
@@ -116,7 +114,7 @@ public class ItemCreationGUI implements NerdGUI {
                         if(teamInput != null) {
                             for(Team team : arena.getTeams()) {
                                 if(team.getTeamName().equalsIgnoreCase(teamInput.getInput())) {
-                                    itemtocheck.setTeam(teamInput.getInput());
+                                    itemtocheck.setTeam(arena.getTeamByName(teamInput.getInput()));
                                 }
                             }
                         }
@@ -126,10 +124,6 @@ public class ItemCreationGUI implements NerdGUI {
                             }
                         }
                         itemtocheck.setCurrency(isCurrency);
-                        NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
-                        ItemMeta itemMeta = itemtocheck.getItem().getItemMeta();
-                        itemMeta.getPersistentDataContainer().remove(key);
-                        itemtocheck.getItem().setItemMeta(itemMeta);
                         arenasConfig.editArena(arena);
                         backgui.displayGUI();
                     }
@@ -143,7 +137,7 @@ public class ItemCreationGUI implements NerdGUI {
         if (teamInput != null) {
             label = "Assigned team: " + teamInput.getInput();
         } else if (item != null) {
-            label = "Assigned team: " + item.getTeam();
+            label = "Assigned team: " + item.getTeam().getTeamName();
         } else {
             label = "Click to assign to a team (if applicable)";
         }

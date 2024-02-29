@@ -74,7 +74,7 @@ public class ArenaGUI implements NerdGUI {
                 }), 6, 1);
         buttons.addItem(new GuiItem(createButton(Material.RED_BED, "Spawns", "#ffffff"),
                 inventoryClickEvent -> {
-                    player.sendMessage(Component.text("EEEEEE"));
+                    new SpawnListGUI(player, this, arena).displayGUI();
                 }), 7, 0);
 
         StaticPane backbutton = new StaticPane(4, 3, 1, 1, Pane.Priority.NORMAL);

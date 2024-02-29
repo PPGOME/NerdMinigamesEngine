@@ -2,14 +2,20 @@ package me.ppgome.nerdminigames.nerdminigames.data;
 
 import org.bukkit.inventory.ItemStack;
 
+/**
+ * The object representing an item for use with teams, storage, and currency in an arena
+ *
+ * @since 0.0.3
+ * @author Keelan Delorme
+ */
 public class Item {
 
     private ItemStack item;
-    private String team;
+    private Team team;
     private int chance;
     private boolean isCurrency;
 
-    public Item(ItemStack item, String team, int chance, boolean isCurrency) {
+    public Item(ItemStack item, Team team, int chance, boolean isCurrency) {
         this.item = item;
         this.team = team;
         this.chance = chance;
@@ -24,11 +30,11 @@ public class Item {
         this.item = item;
     }
 
-    public String getTeam() {
+    public Team getTeam() {
         return team;
     }
 
-    public void setTeam(String team) {
+    public void setTeam(Team team) {
         this.team = team;
     }
 

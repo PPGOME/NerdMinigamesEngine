@@ -4,10 +4,13 @@ import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.*;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import java.io.File;
 import java.util.*;
@@ -67,19 +70,35 @@ public class ArenasConfig {
         data = new ArrayList<>();
         for(Item item : arena.getItems()) {
             data.add(PlainTextComponentSerializer.plainText().serialize(item.getItem().displayName()));
+            NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
+            ItemMeta itemMeta = item.getItem().getItemMeta();
+            itemMeta.getPersistentDataContainer().remove(key);
+            item.getItem().setItemMeta(itemMeta);
         }
         getConfig().set(arenaname + ".Items", data);
 
         for(int i = 0; i < arena.getItems().size(); i++) {
             getConfig().set(arenaname + ".Items." + data.get(i) + ".Item", arena.getItems().get(i).getItem());
-            getConfig().set(arenaname + ".Items." + data.get(i) + ".Team", arena.getItems().get(i).getTeam());
+            getConfig().set(arenaname + ".Items." + data.get(i) + ".Team", arena.getItems().get(i).getTeam().getTeamName());
             getConfig().set(arenaname + ".Items." + data.get(i) + ".Chance", arena.getItems().get(i).getChance());
             getConfig().set(arenaname + ".Items." + data.get(i) + ".IsCurrency", arena.getItems().get(i).isCurrency());
         }
 
+        // Currency
         getConfig().set(arenaname + ".Currency.Rate", arena.getCurrencyrate());
 
+        // Spawns
         getConfig().set(arenaname + ".Spawns", arena.getSpawns());
+        for(Spawn spawn : arena.getSpawns()) {
+            getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.World", spawn.getLocation().getWorld().getName());
+            getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.X", spawn.getLocation().getX());
+            getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.Y", spawn.getLocation().getY());
+            getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.Z", spawn.getLocation().getZ());
+            getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.Pitch", spawn.getLocation().getPitch());
+            getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.Yaw", spawn.getLocation().getYaw());
+            getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Team", spawn.getTeam().getTeamName());
+        }
+
         getConfig().set(arenaname + ".Objectives", arena.getObjectives());
         getConfig().set(arenaname + ".Storage", arena.getStorage());
         getConfig().set(arenaname + ".Armour", arena.getArmour());
@@ -91,7 +110,6 @@ public class ArenasConfig {
         if(arena.toUpperCase(Locale.ROOT).substring(0, 2).equalsIgnoreCase("§F")) {
             arena = arenaName.toUpperCase().substring(2);
         }
-        System.out.println(arena);
         String owner = getConfig().getString(arena + ".Owner");
         String world = getConfig().getString(arena + ".World");
         HashMap<String, Integer> boundaries = new HashMap<>();
@@ -112,12 +130,39 @@ public class ArenasConfig {
         List<Item> items = new ArrayList<>();
         if(config.getConfigurationSection(arena + ".Items") != null) {
             for(String key : config.getConfigurationSection(arena + ".Items").getKeys(false)) {
-                items.add(new Item(getConfig().getItemStack(arena + ".Items." + key + ".Item"), getConfig().getString(arena + ".Items." + key + ".Team"),
-                        getConfig().getInt(arena + ".Items." + key + ".Chance"), getConfig().getBoolean(arena + ".Items." + key + ".IsCurrency")));
+                for(Team team : teams) {
+                    if(team.getTeamName().equalsIgnoreCase(getConfig().getString(arena + ".Items." + key + ".Team"))) {
+                        items.add(new Item(getConfig().getItemStack(arena + ".Items." + key + ".Item"), team,
+                                getConfig().getInt(arena + ".Items." + key + ".Chance"), getConfig().getBoolean(arena + ".Items." + key + ".IsCurrency")));
+                    }
+                }
             }
         }
 
+        // Spawns
         List<Spawn> spawns = new ArrayList<>();
+        if(config.getConfigurationSection(arena + ".Spawns") != null) {
+            for(String key : config.getConfigurationSection(arena + ".Spawns").getKeys(false)) {
+                for(Team team : teams) {
+                    if(team.getTeamName().equalsIgnoreCase(getConfig().getString(arena + ".Spawns." + key + ".Team"))) {
+                        spawns.add(new Spawn(
+                                key,
+                                new Location(
+                                        Bukkit.getWorld(getConfig().getString(arena + ".Spawns." + key + ".Location.World")),
+                                        getConfig().getDouble(arena + ".Spawns." + key + ".Location.X"),
+                                        getConfig().getDouble(arena + ".Spawns." + key + ".Location.Y"),
+                                        getConfig().getDouble(arena + ".Spawns." + key + ".Location.Z"),
+                                        (float) getConfig().getDouble(arena + ".Spawns." + key + ".Location.Pitch"),
+                                        (float) getConfig().getDouble(arena + ".Spawns." + key + ".Location.Yaw")
+                                ),
+                                team
+                                )
+                        );
+                    }
+                }
+            }
+        }
+
         List<Objective> objectives = new ArrayList<>();
         List<Storage> storage = new ArrayList<>();
         List<Armour> armour = new ArrayList<>();
@@ -137,20 +182,6 @@ public class ArenasConfig {
             getConfig().set(arena + ".Teams", teams);
             save();
         }
-    }
-
-    public void deleteTeam(String arena, String team) {
-        List<String> teams = getTeams(arena);
-        System.out.println(teams);
-        teams.removeIf(teamz -> teamz.equals(team));
-        System.out.println(teams);
-        getConfig().set(arena + ".Teams", teams);
-        save();
-        teams = null;
-    }
-
-    public void additem(String arena, ItemStack item, String team, int chance) {
-
     }
 
     public List<String> getTeams(String arena) {
