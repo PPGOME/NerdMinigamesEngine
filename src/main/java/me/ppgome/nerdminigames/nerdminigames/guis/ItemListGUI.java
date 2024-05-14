@@ -11,7 +11,7 @@ import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import me.ppgome.nerdminigames.nerdminigames.data.Item;
-import me.ppgome.nerdminigames.nerdminigames.data.Team;
+import me.ppgome.nerdminigames.nerdminigames.data.Storage;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -27,12 +27,20 @@ public class ItemListGUI implements NerdGUI {
     private final Player player;
     private final NerdGUI backgui;
     private final Arena arena;
+    private Storage storage;
     private List<ItemStack> itemlist = new ArrayList<>();
 
     public ItemListGUI(Player player, NerdGUI backgui, Arena arena) {
         this.player = player;
         this.backgui = backgui;
         this.arena = arena;
+    }
+
+    public ItemListGUI(Player player, NerdGUI backgui, Arena arena, Storage storage) {
+        this.player = player;
+        this.backgui = backgui;
+        this.arena = arena;
+        this.storage = storage;
     }
 
     @Override
@@ -77,12 +85,19 @@ public class ItemListGUI implements NerdGUI {
         }), 0, 0);
 
         pages.setOnClick(inventoryClickEvent -> {
-
-            String itemname = PlainTextComponentSerializer.plainText().serialize(inventoryClickEvent.getCurrentItem().displayName());
-            if(!itemname.equalsIgnoreCase("")) {
-                ItemStack item = inventoryClickEvent.getCurrentItem();
-                new ItemCreationGUI(player, arena, arena.getItemByItem(item), this).displayGUI();
-            }
+                String itemname = PlainTextComponentSerializer.plainText().serialize(inventoryClickEvent.getCurrentItem().displayName());
+                if(!itemname.equalsIgnoreCase("")) {
+                    ItemStack item = inventoryClickEvent.getCurrentItem();
+                    if(storage != null) {
+                        for(Item itemtofind : arena.getItems()) {
+                            if(itemtofind.getItem().equals(inventoryClickEvent.getCurrentItem())) {
+                                new StorageItemCreationGUI(player, arena, backgui, storage, itemtofind).displayGUI();
+                            }
+                        }
+                    } else {
+                        new ItemCreationGUI(player, arena, arena.getItemByItem(item), this).displayGUI();
+                    }
+                }
         });
 
         StaticPane nonPageButton = new StaticPane(3, 4, 3, 1, Pane.Priority.HIGH);

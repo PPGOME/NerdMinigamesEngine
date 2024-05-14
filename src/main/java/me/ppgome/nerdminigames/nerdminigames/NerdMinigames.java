@@ -4,25 +4,14 @@ import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.ppgome.nerdminigames.nerdminigames.NPCs.Bank;
 import me.ppgome.nerdminigames.nerdminigames.arenabuilder.CreationCommands;
-import me.ppgome.nerdminigames.nerdminigames.data.Arena;
-import me.ppgome.nerdminigames.nerdminigames.data.Item;
-import me.ppgome.nerdminigames.nerdminigames.data.Team;
 import me.ppgome.nerdminigames.nerdminigames.guis.NerdGUI;
 import me.ppgome.nerdminigames.nerdminigames.listeners.CreationListeners;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import me.ppgome.nerdminigames.nerdminigames.listeners.WorldGuardListeners;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.checkerframework.checker.units.qual.A;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 public final class NerdMinigames extends JavaPlugin {
@@ -30,6 +19,10 @@ public final class NerdMinigames extends JavaPlugin {
 
     public static NerdMinigames getPlugin() {
         return instance;
+    }
+
+    public static boolean jukeboxAPIIsLoaded() {
+        return Bukkit.getServer().getPluginManager().getPlugin("JukeboxAPI") != null;
     }
 
     private static HashMap<UUID, NerdGUI> pendingInput = new HashMap<>();
@@ -69,6 +62,7 @@ public final class NerdMinigames extends JavaPlugin {
         // Event listeners
         getServer().getPluginManager().registerEvents(new Bank(), this);
         getServer().getPluginManager().registerEvents(new CreationListeners(), this);
+        getServer().getPluginManager().registerEvents(new WorldGuardListeners(), this);
 
         if(!arenaconfigfile.exists()) {
             arenaconfigfile.getParentFile().mkdirs();

@@ -29,11 +29,19 @@ public class GUIUtils {
         ItemStack item = new ItemStack(material);
         ItemMeta itemmeta = item.getItemMeta();
         if(location != null) {
-            itemmeta.displayName(Component.text("X: " + String.format("%.2f", location.getX())).color(TextColor.fromHexString("#ff5050"))
-                    .append(Component.text(" Y: " + String.format("%.2f", location.getY())).color(TextColor.fromHexString("#ffff66")))
-                    .append(Component.text(" Z: " + String.format("%.2f", location.getZ())).color(TextColor.fromHexString("#3399ff")))
-                    .append(Component.text(" Pitch: " + String.format("%.2f", location.getPitch())).color(TextColor.fromHexString("#33cc33")))
-                    .append(Component.text(" Yaw: " + String.format("%.2f", location.getYaw())).color(TextColor.fromHexString("#ff9900"))));
+            Component name = Component.text("X: " + String.format("%.2f", location.getX()))
+                    .color(TextColor.fromHexString("#ff5050"))
+                    .append(Component.text(" Y: " + String.format("%.2f", location.getY()))
+                            .color(TextColor.fromHexString("#ffff66")))
+                    .append(Component.text(" Z: " + String.format("%.2f", location.getZ()))
+                            .color(TextColor.fromHexString("#3399ff")));
+            if(location.getPitch() != 0.0f && location.getYaw() != 0.0f) {
+                name = name.append(Component.text(" Pitch: " + String.format("%.2f", location.getPitch()))
+                        .color(TextColor.fromHexString("#33cc33"))
+                        .append(Component.text(" Yaw: " + String.format("%.2f", location.getYaw()))
+                                .color(TextColor.fromHexString("#ff9900"))));
+            }
+            itemmeta.displayName(name);
         } else {
             itemmeta.displayName(Component.text("Click to set location"));
         }

@@ -5,7 +5,10 @@ import me.ppgome.nerdminigames.nerdminigames.data.*;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.block.Block;
+import org.bukkit.block.Container;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -67,15 +70,17 @@ public class ArenasConfig {
         }
 
         // Items
-        data = new ArrayList<>();
+        data.clear();
+        getConfig().set(arenaname + ".Items", "");
         for(Item item : arena.getItems()) {
-            data.add(PlainTextComponentSerializer.plainText().serialize(item.getItem().displayName()));
+            data.add(String.valueOf(arena.getItems().indexOf(item)));
             NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
             ItemMeta itemMeta = item.getItem().getItemMeta();
-            itemMeta.getPersistentDataContainer().remove(key);
-            item.getItem().setItemMeta(itemMeta);
+            if(itemMeta.getPersistentDataContainer().has(key)) {
+                itemMeta.getPersistentDataContainer().remove(key);
+                item.getItem().setItemMeta(itemMeta);
+            }
         }
-        getConfig().set(arenaname + ".Items", data);
 
         for(int i = 0; i < arena.getItems().size(); i++) {
             getConfig().set(arenaname + ".Items." + data.get(i) + ".Item", arena.getItems().get(i).getItem());
@@ -84,11 +89,29 @@ public class ArenasConfig {
             getConfig().set(arenaname + ".Items." + data.get(i) + ".IsCurrency", arena.getItems().get(i).isCurrency());
         }
 
+//        data = new ArrayList<>();
+//        for(Item item : arena.getItems()) {
+//            data.add(PlainTextComponentSerializer.plainText().serialize(item.getItem().displayName()));
+//            NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
+//            ItemMeta itemMeta = item.getItem().getItemMeta();
+//            itemMeta.getPersistentDataContainer().remove(key);
+//            item.getItem().setItemMeta(itemMeta);
+//        }
+//
+//        for(int i = 0; i < arena.getItems().size(); i++) {
+//            getConfig().set(arenaname + ".Items." + data.get(i) + ".Item", arena.getItems().get(i).getItem());
+//            getConfig().set(arenaname + ".Items." + data.get(i) + ".Team", arena.getItems().get(i).getTeam().getTeamName());
+//            getConfig().set(arenaname + ".Items." + data.get(i) + ".Chance", arena.getItems().get(i).getChance());
+//            getConfig().set(arenaname + ".Items." + data.get(i) + ".IsCurrency", arena.getItems().get(i).isCurrency());
+//        }
+
         // Currency
         getConfig().set(arenaname + ".Currency.Rate", arena.getCurrencyrate());
 
         // Spawns
         getConfig().set(arenaname + ".Spawns", arena.getSpawns());
+        data.clear();
+
         for(Spawn spawn : arena.getSpawns()) {
             getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.World", spawn.getLocation().getWorld().getName());
             getConfig().set(arenaname + ".Spawns." + spawn.getName() + ".Location.X", spawn.getLocation().getX());
@@ -100,7 +123,24 @@ public class ArenasConfig {
         }
 
         getConfig().set(arenaname + ".Objectives", arena.getObjectives());
+
+        //Storage
         getConfig().set(arenaname + ".Storage", arena.getStorage());
+        for(Storage storage : arena.getStorage()) {
+            String name = String.valueOf(arena.getStorage().indexOf(storage));
+            getConfig().set(arenaname + ".Storage." + name + ".Type", storage.getContainer().getType().toString());
+            getConfig().set(arenaname + ".Storage." + name + ".Location.World", storage.getLocation().getWorld().getName());
+            getConfig().set(arenaname + ".Storage." + name + ".Location.X", storage.getLocation().getX());
+            getConfig().set(arenaname + ".Storage." + name + ".Location.Y", storage.getLocation().getY());
+            getConfig().set(arenaname + ".Storage." + name + ".Location.Z", storage.getLocation().getZ());
+            for(StorageItem storageItem : storage.getItems()) {
+                getConfig().set(arenaname + ".Storage." + name + ".Items." + storageItem.getID() + ".Min.", storageItem.getMin());
+                getConfig().set(arenaname + ".Storage." + name + ".Items." + storageItem.getID() + ".Max.", storageItem.getMax());
+                getConfig().set(arenaname + ".Storage." + name + ".Items." + storageItem.getID() + ".Chance.", storageItem.getChance());
+            }
+            // Store the IDs of items, not items themselves
+        }
+
         getConfig().set(arenaname + ".Armour", arena.getArmour());
         save();
     }
@@ -127,6 +167,7 @@ public class ArenasConfig {
             }
         }
 
+        // Items
         List<Item> items = new ArrayList<>();
         if(config.getConfigurationSection(arena + ".Items") != null) {
             for(String key : config.getConfigurationSection(arena + ".Items").getKeys(false)) {
@@ -164,7 +205,35 @@ public class ArenasConfig {
         }
 
         List<Objective> objectives = new ArrayList<>();
+
+        // Storage
         List<Storage> storage = new ArrayList<>();
+        Location location;
+        if(config.getConfigurationSection(arena + ".Storage") != null) {
+            for(String key : config.getConfigurationSection(arena + ".Storage").getKeys(false)) {
+                location = new Location(
+                        Bukkit.getWorld(getConfig().getString(arena + ".Storage." + key + ".Location.World")),
+                        getConfig().getDouble(arena + ".Storage." + key + ".Location.X"),
+                        getConfig().getDouble(arena + ".Storage." + key + ".Location.Y"),
+                        getConfig().getDouble(arena + ".Storage." + key + ".Location.Z")
+                );
+                System.out.println("gets here");
+                Block block = location.getWorld().getBlockAt(location);
+                System.out.println(block);
+                if(block != null && block.getType() != Material.AIR) {
+                    if(block.getState() instanceof Container) {
+                        storage.add(new Storage((Container) block.getState(), location));
+                    } else {
+                        config.set(arena + ".Storage." + key, null);
+                    }
+                } else {
+                    System.out.println("now here!");
+                    System.out.println(arena + ".Storage." + key);
+                    config.set(arena + ".Storage." + key, null);
+                }
+            }
+        }
+
         List<Armour> armour = new ArrayList<>();
 
         int currencyrate = 16;

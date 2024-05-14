@@ -6,3 +6,4 @@ prefix: NerdMinigames
 authors: [ PPGOME ]
 description: A plugin for building and running minigames
 website: https://github.com/PPGOME
+softdepend: [WorldGuard, JukeboxAPI]

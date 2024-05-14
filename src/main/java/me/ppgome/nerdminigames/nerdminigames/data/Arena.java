@@ -54,6 +54,7 @@ public class Arena {
         this.teams = teams;
         this.items = items;
         this.spawns = spawns;
+        this.storage = storage;
         this.currencyrate = currencyrate;
     }
 
@@ -189,6 +190,14 @@ public class Arena {
 
     public List<Storage> getStorage() {
         return storage;
+    }
+
+    public void addStorage(Storage storage) {
+        this.storage.add(storage);
+    }
+
+    public void deleteStorage(Storage storage) {
+        this.storage.remove(storage);
     }
 
     public void setStorage(List<Storage> storage) {

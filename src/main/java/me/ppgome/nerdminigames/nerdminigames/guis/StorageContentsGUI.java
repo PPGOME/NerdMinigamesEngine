@@ -2,16 +2,15 @@ package me.ppgome.nerdminigames.nerdminigames.guis;
 
 import com.github.stefvanschie.inventoryframework.gui.GuiItem;
 import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
-import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.PaginatedPane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
 import com.github.stefvanschie.inventoryframework.pane.util.Slot;
-import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
-import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
-import me.ppgome.nerdminigames.nerdminigames.data.Spawn;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import me.ppgome.nerdminigames.nerdminigames.data.Item;
+import me.ppgome.nerdminigames.nerdminigames.data.Storage;
+import me.ppgome.nerdminigames.nerdminigames.data.StorageItem;
+import org.apache.commons.lang3.text.WordUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -19,63 +18,56 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-import static me.ppgome.nerdminigames.nerdminigames.Utils.removeBrackets;
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.addBackground;
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
-public class SpawnListGUI implements NerdGUI {
+public class StorageContentsGUI implements NerdGUI {
 
-    private final Player player;
-    private final NerdGUI backgui;
-    private final Arena arena;
+    private Player player;
+    private Arena arena;
+    private NerdGUI backgui;
+    private Storage storage;
+
     private List<ItemStack> itemlist = new ArrayList<>();
 
-    ChestGui gui;
+    private ChestGui gui;
 
-    public SpawnListGUI(Player player, NerdGUI backgui, Arena arena) {
+    public StorageContentsGUI(Player player, Arena arena, NerdGUI backgui, Storage storage) {
         this.player = player;
-        this.backgui = backgui;
         this.arena = arena;
+        this.backgui = backgui;
+        this.storage = storage;
     }
 
     @Override
     public void displayGUI() {
 
-        gui = new ChestGui(5, "Spawns");
-
-        gui.setOnGlobalClick(e -> e.setCancelled(true));
-        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
+        gui = new ChestGui(5, "Items in this storage block");
+        gui.setOnGlobalClick(c -> c.setCancelled(true));
 
         addBackground(gui);
+
+        StaticPane buttons = new StaticPane(0, 0, 9, 5, Pane.Priority.HIGHEST);
+
+        for(StorageItem item : storage.getItems()) {
+            itemlist.add(arena.getItems().get(item.getID()).getItem());
+        }
 
         PaginatedPane pages = new PaginatedPane(0, 1, 9, 3, Pane.Priority.HIGH);
         itemlist = new ArrayList<>();
         pages.clear();
 
-        for(Spawn spawn : arena.getSpawns()) {
-            itemlist.add(createButton(Material.RED_BED, spawn.getName(), "#FFFFFF"));
-        }
-
         pages.populateWithItemStacks(itemlist);
 
-        pages.setOnClick(inventoryClickEvent -> {
-
-            String itemname = PlainTextComponentSerializer.plainText().serialize(inventoryClickEvent.getCurrentItem().displayName());
-            if(!itemname.equalsIgnoreCase("")) {
-                ItemStack item = inventoryClickEvent.getCurrentItem();
-                new SpawnCreationGUI(player, arena, arena.getSpawnByName(removeBrackets(item.displayName())), this).displayGUI();
-            }
-        });
-
-        StaticPane buttons = new StaticPane(0, 0, 9, 5);
-
-        // Page cycling
+        // Pages back
         buttons.addItem(new GuiItem(createButton(Material.ARROW, "Back", "#FFFFFF"), inventoryClickEvent -> {
             if(pages.getPage() > 0) {
                 pages.setPage(pages.getPage() - 1);
                 gui.update();
             }
         }), Slot.fromIndex(37));
+
+        // Pages next
         buttons.addItem(new GuiItem(createButton(Material.ARROW, "Next", "#FFFFFF"), inventoryClickEvent -> {
             if(pages.getPage() != pages.getPages() - 1) {
                 pages.setPage(pages.getPage() + 1);
@@ -88,13 +80,17 @@ public class SpawnListGUI implements NerdGUI {
             backgui.displayGUI();
         }), Slot.fromIndex(39));
 
-        // Add Spawn
-        buttons.addItem(new GuiItem(createButton(Material.NAME_TAG, "New Spawn...", "#FFFFFF"), clicc -> {
-            new SpawnCreationGUI(player, arena, this).displayGUI();
+        // Add new item
+        buttons.addItem(new GuiItem(createButton(Material.NAME_TAG, "Add item", "#FFFFFF"), clicc -> {
+            new ItemListGUI(player, this, arena, storage).displayGUI();
         }), Slot.fromIndex(41));
 
-        gui.addPane(buttons);
+        pages.setOnClick(clicc -> {
+        });
+
         gui.addPane(pages);
+        gui.addPane(buttons);
         gui.show(player);
+
     }
 }

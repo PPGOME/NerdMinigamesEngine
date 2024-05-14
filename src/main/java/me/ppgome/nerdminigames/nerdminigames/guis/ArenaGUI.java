@@ -5,6 +5,7 @@ import com.github.stefvanschie.inventoryframework.gui.type.ChestGui;
 import com.github.stefvanschie.inventoryframework.pane.OutlinePane;
 import com.github.stefvanschie.inventoryframework.pane.Pane;
 import com.github.stefvanschie.inventoryframework.pane.StaticPane;
+import com.github.stefvanschie.inventoryframework.pane.util.Slot;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
@@ -16,7 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
+import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.*;
 
 public class ArenaGUI implements NerdGUI {
 
@@ -32,51 +33,56 @@ public class ArenaGUI implements NerdGUI {
 
     @Override
     public void displayGUI() {
-        ChestGui gui = new ChestGui(4, "Editing " + arena.getArenaName());
+        ChestGui gui = new ChestGui(5, "Editing " + arena.getArenaName());
 
         gui.setOnGlobalClick(event -> event.setCancelled(true));
 
-        ArenasConfig arenasConfig = new ArenasConfig(NerdMinigames.getPlugin());
-        arenasConfig.getConfig().set("thisisatest.hello", "a");
+        addBackground(gui);
 
-        System.out.println(arena.getBoundaries());
-        System.out.println(arena.getOwner());
-        System.out.println(arena.getWorld());
+        StaticPane buttons = new StaticPane(0, 1, 9, 3, Pane.Priority.HIGHEST);
 
-        OutlinePane background = new OutlinePane(0, 0, 9, 4, Pane.Priority.LOWEST);
-        background.addItem(new GuiItem(new ItemStack(Material.BLACK_STAINED_GLASS_PANE)));
-        background.setRepeat(true);
-
-        OutlinePane topbackground = new OutlinePane(0, 0, 9, 1, Pane.Priority.LOW);
-        topbackground.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
-        topbackground.setRepeat(true);
-
-        OutlinePane bottombackground = new OutlinePane(0, 3, 9, 1, Pane.Priority.LOW);
-        bottombackground.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
-        bottombackground.setRepeat(true);
-
-        StaticPane buttons = new StaticPane(0, 1, 9, 2, Pane.Priority.NORMAL);
-        buttons.addItem(new GuiItem(createButton(Material.DIAMOND_PICKAXE, "Arena Options", "#ffffff"),
-                inventoryClickEvent -> {
-                    player.sendMessage(Component.text("AAAAAA"));
-                }), 4, 0);
+        // Teams
         buttons.addItem(new GuiItem(createButton(Material.PLAYER_HEAD, "Teams", "#ffffff"),
                 inventoryClickEvent -> {
                     new TeamListGUI(player, this, arena).displayGUI();
-                }), 1, 0);
+                }), Slot.fromIndex(1));
+
+        // Items
         buttons.addItem(new GuiItem(createButton(Material.CHEST, "Items", "#ffffff"),
                 inventoryClickEvent -> {
                     new ItemListGUI(player, this, arena).displayGUI();
-                }), 2, 1);
-        buttons.addItem(new GuiItem(createButton(Material.EXPERIENCE_BOTTLE, "Objectives", "#ffffff"),
-                inventoryClickEvent -> {
-                    player.sendMessage(Component.text("DDDDDD"));
-                }), 6, 1);
+                }), Slot.fromIndex(3));
+
+        // Spawns
         buttons.addItem(new GuiItem(createButton(Material.RED_BED, "Spawns", "#ffffff"),
                 inventoryClickEvent -> {
                     new SpawnListGUI(player, this, arena).displayGUI();
-                }), 7, 0);
+                }), Slot.fromIndex(5));
 
+        // Objectives
+        buttons.addItem(new GuiItem(createButton(Material.EXPERIENCE_BOTTLE, "Objectives", "#ffffff"),
+                inventoryClickEvent -> {
+                    player.sendMessage(Component.text("DDDDDD"));
+                }), Slot.fromIndex(7));
+
+        // Storage
+
+        buttons.addItem(new GuiItem(createButton(Material.CHEST, "Storage", "#FFFFFF"), clicc -> {
+            new StorageListGUI(player, this, arena).displayGUI();
+        }), Slot.fromIndex(20));
+
+        // Server Options
+        buttons.addItem(new GuiItem(createButton(Material.DIAMOND_PICKAXE, "Arena Options", "#ffffff"),
+                inventoryClickEvent -> {
+                    player.sendMessage(Component.text("AAAAAA"));
+                }), Slot.fromIndex(22));
+
+        // Armour
+        buttons.addItem(new GuiItem(createButton(Material.DIAMOND_CHESTPLATE, "Armour", "#FFFFFF"), clicc -> {
+
+        }), Slot.fromIndex(24));
+
+        // Back
         StaticPane backbutton = new StaticPane(4, 3, 1, 1, Pane.Priority.NORMAL);
         backbutton.addItem(new GuiItem(createButton(Material.ARROW, "Back", "#FFFFFF"),
                 inventoryClickEvent -> {
@@ -85,9 +91,6 @@ public class ArenaGUI implements NerdGUI {
                     }
                 }), 0, 0);
 
-        gui.addPane(background);
-        gui.addPane(topbackground);
-        gui.addPane(bottombackground);
         gui.addPane(buttons);
         gui.addPane(backbutton);
 
