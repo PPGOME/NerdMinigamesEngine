@@ -20,12 +20,8 @@ public class Storage {
     private Location location;
     private List<StorageItem> items = new ArrayList<>();
 
-    public Storage(Container container, Location location) {
+    public Storage(Container container, Location location, List<StorageItem> items) {
         this.container = container;
-        this.location = location;
-    }
-
-    public Storage(Location location, List<StorageItem> items) {
         this.location = location;
         this.items = items;
     }
@@ -54,5 +50,9 @@ public class Storage {
 
     public void setItems(List<StorageItem> items) {
         this.items = items;
+    }
+
+    public void addItems(StorageItem storageitem) {
+        this.items.add(storageitem);
     }
 }

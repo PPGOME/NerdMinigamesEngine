@@ -42,7 +42,7 @@ public class BankCurrencyListGUI implements NerdGUI {
     private Arena arena;
     private ExternalCurrency externalCurrency;
 
-    private final NamespacedKey arenaName = new NamespacedKey(NerdMinigames.getPlugin(), "arena");
+    private final NamespacedKey arenaName = new NamespacedKey(NerdMinigames.PLUGIN, "arena");
 
     public BankCurrencyListGUI(Player player) {
         this.player = player;
@@ -56,8 +56,8 @@ public class BankCurrencyListGUI implements NerdGUI {
     @Override
     public void displayGUI() {
 
-        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
-        CurrencyConfig currencyConfig = new CurrencyConfig(NerdMinigames.getPlugin());
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.PLUGIN);
+        CurrencyConfig currencyConfig = new CurrencyConfig(NerdMinigames.PLUGIN);
 
         if (rateinput != null) {
             if (isInteger(rateinput.getInput()) && !rateinput.getInput().equalsIgnoreCase("")) {

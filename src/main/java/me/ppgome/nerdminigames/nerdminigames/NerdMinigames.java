@@ -3,7 +3,8 @@ package me.ppgome.nerdminigames.nerdminigames;
 import dev.jorel.commandapi.CommandAPI;
 import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import me.ppgome.nerdminigames.nerdminigames.NPCs.Bank;
-import me.ppgome.nerdminigames.nerdminigames.arenabuilder.CreationCommands;
+import me.ppgome.nerdminigames.nerdminigames.commands.CreationCommands;
+import me.ppgome.nerdminigames.nerdminigames.data.Minigame;
 import me.ppgome.nerdminigames.nerdminigames.guis.NerdGUI;
 import me.ppgome.nerdminigames.nerdminigames.listeners.CreationListeners;
 import me.ppgome.nerdminigames.nerdminigames.listeners.WorldGuardListeners;
@@ -15,17 +16,20 @@ import java.util.HashMap;
 import java.util.UUID;
 
 public final class NerdMinigames extends JavaPlugin {
-    private static NerdMinigames instance;
 
-    public static NerdMinigames getPlugin() {
-        return instance;
-    }
+    //--------------------------------------------------------------------------------------
+
+    public static NerdMinigames PLUGIN;
+
+    private static HashMap<UUID, NerdGUI> pendingInput = new HashMap<>();
+
+    private static HashMap<Integer, Minigame> activeGames = new HashMap<>();
+
+    //--------------------------------------------------------------------------------------
 
     public static boolean jukeboxAPIIsLoaded() {
         return Bukkit.getServer().getPluginManager().getPlugin("JukeboxAPI") != null;
     }
-
-    private static HashMap<UUID, NerdGUI> pendingInput = new HashMap<>();
 
     @Override
     public void onLoad() {
@@ -50,9 +54,7 @@ public final class NerdMinigames extends JavaPlugin {
     public void onEnable() {
         // Plugin startup logic
 
-        System.out.println("AHAHAHAHAH");
-
-        instance = this;
+        PLUGIN = this;
 
         saveDefaultConfig();
 
@@ -75,7 +77,7 @@ public final class NerdMinigames extends JavaPlugin {
             saveResource("currency.yml", false);
         }
 
-        ArenasConfig arenaconfig = new ArenasConfig(instance);
+        ArenasConfig arenaconfig = new ArenasConfig(PLUGIN);
 
 //        ItemStack test = new ItemStack(Material.STRING);
 //        ItemMeta testmeta = test.getItemMeta();
@@ -121,4 +123,13 @@ public final class NerdMinigames extends JavaPlugin {
     public static void addPendingInput(UUID uuid, NerdGUI gui) {
         pendingInput.put(uuid, gui);
     }
+
+    public static Minigame getActiveGames(int gameID) {
+        return activeGames.get(gameID);
+    }
+
+    public static void addActiveGame(Minigame minigame) {
+        activeGames.put(minigame.getGameid(), minigame);
+    }
+
 }

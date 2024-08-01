@@ -44,7 +44,7 @@ public class SpawnListGUI implements NerdGUI {
         gui = new ChestGui(5, "Spawns");
 
         gui.setOnGlobalClick(e -> e.setCancelled(true));
-        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.PLUGIN);
 
         addBackground(gui);
 

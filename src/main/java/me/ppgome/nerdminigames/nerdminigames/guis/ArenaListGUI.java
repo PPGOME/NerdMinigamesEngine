@@ -12,6 +12,8 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
@@ -26,6 +28,7 @@ import java.util.List;
 
 import static me.ppgome.nerdminigames.nerdminigames.Utils.removeBrackets;
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
+import static me.ppgome.nerdminigames.nerdminigames.messages.PlayerMessager.errorMessage;
 
 public class ArenaListGUI implements NerdGUI {
 
@@ -51,7 +54,7 @@ public class ArenaListGUI implements NerdGUI {
         ChestGui gui = new ChestGui(5, "Arenas");
 
         gui.setOnGlobalClick(e -> e.setCancelled(true));
-        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.PLUGIN);
 
         OutlinePane whitebars = new OutlinePane(0, 0, 9, 5, Pane.Priority.LOWEST);
         whitebars.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
@@ -72,13 +75,18 @@ public class ArenaListGUI implements NerdGUI {
                 Actor WEPlayer = BukkitAdapter.adapt(player);
                 LocalSession localSession = WorldEdit.getInstance().getSessionManager().get(WEPlayer);
                 // Check if user has a WE selection
-                try {
-                    region = localSession.getSelection();
-                    Arena arena = new Arena(datagui.getInput(), player, player.getWorld().getName(), region.getMaximumPoint(), region.getMinimumPoint());
-                    arenaconfig.editArena(arena);
-                } catch (IncompleteRegionException e) {
-                    player.sendMessage(Component.text("Hey, you don't have a worldedit selection to define this arena!")
-                            .color(TextColor.fromHexString("#ff6464")));
+                if(datagui.getInput().matches("[A-Za-z0-9_,'\\-\\+/]{1,}")) {
+                    try {
+                        region = localSession.getSelection();
+                        Arena arena = new Arena(datagui.getInput(), player, player.getWorld().getName(), region.getMaximumPoint(), region.getMinimumPoint());
+                        arenaconfig.editArena(arena);
+                        ProtectedRegion arenaregion = new ProtectedCuboidRegion(datagui.getInput(), region.getMinimumPoint(), region.getMaximumPoint());
+                    } catch (IncompleteRegionException e) {
+                        player.sendMessage(Component.text("Hey, you don't have a worldedit selection to define this arena!")
+                                .color(TextColor.fromHexString("#ff6464")));
+                    }
+                } else {
+                    errorMessage(player.getName(), "Please only use letters, numbers, and symbols (_, *, -, +, /)");
                 }
             }
         }

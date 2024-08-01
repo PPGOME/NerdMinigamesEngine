@@ -30,7 +30,7 @@ public class Bank implements Listener {
     public void onTellerLeftClick(NPCLeftClickEvent e) {
         Player p = e.getClicker();
         List<Arena> arenas = new ArrayList<>();
-        ArenasConfig config = new ArenasConfig(NerdMinigames.getPlugin());
+        ArenasConfig config = new ArenasConfig(NerdMinigames.PLUGIN);
         ItemStack handitem = p.getInventory().getItemInMainHand();
 
         for(String strarena : config.getArenas()) {

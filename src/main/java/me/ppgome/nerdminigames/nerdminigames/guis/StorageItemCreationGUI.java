@@ -90,9 +90,9 @@ public class StorageItemCreationGUI implements NerdGUI {
                     if(isInteger(maxInput.getInput()) && chanceInput.getInput() != null) {
                         if(isInteger(chanceInput.getInput())) {
                             if(Integer.parseInt(chanceInput.getInput()) >= 0 && Integer.parseInt(chanceInput.getInput()) <= 100) {
-                                List<StorageItem> itemstoaddto = storage.getItems();
-                                itemstoaddto.add(new StorageItem(arena.getItems().indexOf(item), Integer.parseInt(minInput.getInput()),
+                                storage.addItems(new StorageItem(item.getID(), Integer.parseInt(minInput.getInput()),
                                         Integer.parseInt(maxInput.getInput()), Integer.parseInt(chanceInput.getInput())));
+                                backgui.displayGUI();
                             }
                         }
                     }

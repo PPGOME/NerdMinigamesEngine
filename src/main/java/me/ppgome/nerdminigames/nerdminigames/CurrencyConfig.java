@@ -40,8 +40,8 @@ public class CurrencyConfig {
     }
 
     public void addCurrency(ItemStack item, int rate) {
-        NamespacedKey ifuuid = new NamespacedKey(NerdMinigames.getPlugin(), "if-uuid");
-        NamespacedKey arena = new NamespacedKey(NerdMinigames.getPlugin(), "arena");
+        NamespacedKey ifuuid = new NamespacedKey(NerdMinigames.PLUGIN, "if-uuid");
+        NamespacedKey arena = new NamespacedKey(NerdMinigames.PLUGIN, "arena");
         ItemMeta itemMeta = item.getItemMeta();
         itemMeta.getPersistentDataContainer().remove(ifuuid);
         if(itemMeta.getPersistentDataContainer().has(arena)) {

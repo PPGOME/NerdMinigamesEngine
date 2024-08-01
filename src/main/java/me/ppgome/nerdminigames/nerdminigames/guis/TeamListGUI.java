@@ -45,7 +45,7 @@ public class TeamListGUI implements NerdGUI {
         ChestGui gui = new ChestGui(5, "Teams");
 
         gui.setOnGlobalClick(e -> e.setCancelled(true));
-        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.PLUGIN);
 
         OutlinePane whitebars = new OutlinePane(0, 0, 9, 5, Pane.Priority.LOWEST);
         whitebars.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));

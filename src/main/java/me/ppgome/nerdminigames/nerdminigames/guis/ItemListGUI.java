@@ -49,7 +49,7 @@ public class ItemListGUI implements NerdGUI {
         ChestGui gui = new ChestGui(5, "Items");
 
         gui.setOnGlobalClick(e -> e.setCancelled(true));
-        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.PLUGIN);
 
         OutlinePane whitebars = new OutlinePane(0, 0, 9, 5, Pane.Priority.LOWEST);
         whitebars.addItem(new GuiItem(new ItemStack(Material.WHITE_STAINED_GLASS_PANE)));
@@ -88,7 +88,7 @@ public class ItemListGUI implements NerdGUI {
                 String itemname = PlainTextComponentSerializer.plainText().serialize(inventoryClickEvent.getCurrentItem().displayName());
                 if(!itemname.equalsIgnoreCase("")) {
                     ItemStack item = inventoryClickEvent.getCurrentItem();
-                    if(storage != null) {
+                    if(backgui instanceof StorageContentsGUI) {
                         for(Item itemtofind : arena.getItems()) {
                             if(itemtofind.getItem().equals(inventoryClickEvent.getCurrentItem())) {
                                 new StorageItemCreationGUI(player, arena, backgui, storage, itemtofind).displayGUI();
@@ -118,5 +118,4 @@ public class ItemListGUI implements NerdGUI {
         gui.show(player);
 
     }
-
 }

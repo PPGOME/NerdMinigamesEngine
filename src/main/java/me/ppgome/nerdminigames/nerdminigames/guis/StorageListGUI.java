@@ -51,7 +51,7 @@ public class StorageListGUI implements NerdGUI {
         gui = new ChestGui(5, "Storage");
 
         gui.setOnGlobalClick(e -> e.setCancelled(true));
-        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.getPlugin());
+        ArenasConfig arenaconfig = new ArenasConfig(NerdMinigames.PLUGIN);
 
         addBackground(gui);
 
@@ -77,7 +77,7 @@ public class StorageListGUI implements NerdGUI {
             NerdMinigames.addPendingInput(player.getUniqueId(), this);
             player.closeInventory();
             BukkitScheduler scheduler = Bukkit.getScheduler();
-            scheduler.runTaskTimer(NerdMinigames.getPlugin(), task -> {
+            scheduler.runTaskTimer(NerdMinigames.PLUGIN, task -> {
                 if(NerdMinigames.getPendingInput().containsKey(player.getUniqueId())) {
                     player.sendActionBar(Component.text("Selecting a storage block...", TextColor.fromHexString("#ff3a3a")));
                 } else {

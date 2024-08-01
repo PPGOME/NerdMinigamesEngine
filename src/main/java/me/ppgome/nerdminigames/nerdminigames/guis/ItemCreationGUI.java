@@ -85,7 +85,7 @@ public class ItemCreationGUI implements NerdGUI {
 
         // Confirm
         buttons.addItem(new GuiItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Confirm", "#b5ff20"), inventoryClickEvent -> {
-            ArenasConfig arenasConfig = new ArenasConfig(NerdMinigames.getPlugin());
+            ArenasConfig arenasConfig = new ArenasConfig(NerdMinigames.PLUGIN);
             if(item == null) {
                 if(chance != null && isInteger(chance.getInput())) {
                     int chanceinput = Integer.parseInt(chance.getInput());
@@ -178,7 +178,7 @@ public class ItemCreationGUI implements NerdGUI {
             buttons.addItem(new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Arena already has a currency!",
                     "#ff5151")), Slot.fromIndex(23 + nudge));
         } else {
-            GuiItem currencybutton = new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"), NerdMinigames.getPlugin());
+            GuiItem currencybutton = new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Is arena's currency: false", "#ff5151"), NerdMinigames.PLUGIN);
 
             currencybutton.setAction(inventoryClickEvent -> {
                 if (!checkIfCurrency(item)) {
@@ -271,7 +271,7 @@ public class ItemCreationGUI implements NerdGUI {
 
         if(deleteItem != null && deleteItem.getInput()) {
             arena.deleteItem(item);
-            new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+            new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
             backgui.displayGUI();
         }
 

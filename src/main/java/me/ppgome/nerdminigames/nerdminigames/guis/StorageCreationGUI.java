@@ -19,6 +19,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.scheduler.BukkitScheduler;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.addBackground;
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 import static org.apache.commons.lang3.text.WordUtils.capitalizeFully;
@@ -28,14 +31,15 @@ public class StorageCreationGUI implements NerdGUI{
     private Player player;
     private Arena arena;
     private NerdGUI backgui;
-    ChestGui gui;
-    ConfirmationGUI deleteStorage;
+    private ChestGui gui;
+    private ConfirmationGUI deleteStorage;
 
     private Storage storage;
+    private boolean firstOpen = true;
 
     private Container container;
 
-    NamespacedKey arenastorage = new NamespacedKey(NerdMinigames.getPlugin(), "arenastorage");
+    NamespacedKey arenastorage = new NamespacedKey(NerdMinigames.PLUGIN, "arenastorage");
 
     public StorageCreationGUI(Player player, Arena arena, NerdGUI backgui) {
         this.player = player;
@@ -51,7 +55,9 @@ public class StorageCreationGUI implements NerdGUI{
     }
 
     public void setContainer(Container container) {
+        System.out.println(container.getType());
         this.container = container;
+        System.out.println(this.container.getType());
         displayGUI();
     }
 
@@ -60,8 +66,10 @@ public class StorageCreationGUI implements NerdGUI{
 
         if(storage != null) {
             gui = new ChestGui(5, "Editing storage...");
-            container = storage.getContainer();
-            System.out.println(storage);
+            if(firstOpen) {
+                container = storage.getContainer();
+                firstOpen = false;
+            }
         } else {
             gui = new ChestGui(5, "Creating storage...");
         }
@@ -72,21 +80,25 @@ public class StorageCreationGUI implements NerdGUI{
 
         StaticPane buttons = new StaticPane(0, 1, 9, 3, Pane.Priority.HIGHEST);
 
+        int nudge = 9;
+        if(storage != null) {
+            nudge = 0;
+        }
+
         // Cancel
         buttons.addItem(new GuiItem(createButton(Material.RED_STAINED_GLASS_PANE, "Cancel", "#ff5151"), inventoryClickEvent -> {
             backgui.displayGUI();
-        }), Slot.fromIndex(2));
+        }), Slot.fromIndex(2 + nudge));
 
         // Confirm
         buttons.addItem(new GuiItem(createButton(Material.LIME_STAINED_GLASS_PANE, "Confirm", "#b5ff20"), inventoryClickEvent -> {
             if(storage == null) {
                 storage = new Storage();
                 if(container != null) {
-                    // TODO add items
                     storage.setLocation(container.getLocation());
                     storage.setContainer(container);
                     arena.addStorage(storage);
-                    new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+                    new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
                     backgui.displayGUI();
 
                     if(!container.getPersistentDataContainer().has(arenastorage)) {
@@ -96,14 +108,21 @@ public class StorageCreationGUI implements NerdGUI{
                 }
             } else {
                 // TODO add items
-                System.out.println("Todo!");
+                storage.getContainer().getPersistentDataContainer().set(arenastorage, PersistentDataType.BOOLEAN, false);
+                storage.getContainer().update();
+                container.getPersistentDataContainer().set(arenastorage, PersistentDataType.BOOLEAN, true);
+                container.update();
+                storage.setLocation(container.getLocation());
+                storage.setContainer(container);
+                new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
+                backgui.displayGUI();
             }
-        }), Slot.fromIndex(6));
+        }), Slot.fromIndex(6 + nudge));
 
         Material icon = Material.CHEST;
 
         if(container != null) {
-            icon = container.getType();
+            icon = this.container.getType();
         }
 
         // Get Container
@@ -115,27 +134,22 @@ public class StorageCreationGUI implements NerdGUI{
             NerdMinigames.addPendingInput(player.getUniqueId(), this);
             player.closeInventory();
             BukkitScheduler scheduler = Bukkit.getScheduler();
-            scheduler.runTaskTimer(NerdMinigames.getPlugin(), task -> {
+            scheduler.runTaskTimer(NerdMinigames.PLUGIN, task -> {
                 if(NerdMinigames.getPendingInput().containsKey(player.getUniqueId())) {
                     player.sendActionBar(Component.text("Selecting a storage block...", TextColor.fromHexString("#ff3a3a")));
                 } else {
                     task.cancel();
                 }
             }, 0L, 20L);
-        }), Slot.fromIndex(4));
+        }), Slot.fromIndex(4 + nudge));
 
-        int nudge = 1;
         if(storage != null) {
-            nudge = 0;
-        }
+            // Add Items
+            buttons.addItem(new GuiItem(createButton(Material.DIAMOND, "Add Items", "#FFFFFF"), clicc -> {
+                new StorageContentsGUI(player, arena, this, storage).displayGUI();
+            }), Slot.fromIndex(21));
 
-        // Add Items
-        buttons.addItem(new GuiItem(createButton(Material.DIAMOND, "Add Items", "#FFFFFF"), clicc -> {
-            new StorageContentsGUI(player, arena, this, storage).displayGUI();
-        }), Slot.fromIndex(21 + nudge));
-
-        // Delete Storage
-        if(storage != null) {
+            // Delete Storage
             buttons.addItem(new GuiItem(createButton(Material.BARRIER, "Delete Storage", "#FFFFFF"), clicc -> {
                 deleteStorage = new ConfirmationGUI(player, "Delete this storage?", this);
                 deleteStorage.displayGUI();
@@ -147,7 +161,7 @@ public class StorageCreationGUI implements NerdGUI{
 
         if(deleteStorage != null && deleteStorage.getInput()) {
             arena.deleteStorage(storage);
-            new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+            new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
             backgui.displayGUI();
             if(container.getPersistentDataContainer().has(arenastorage)) {
                 container.getPersistentDataContainer().set(arenastorage, PersistentDataType.BOOLEAN, false);

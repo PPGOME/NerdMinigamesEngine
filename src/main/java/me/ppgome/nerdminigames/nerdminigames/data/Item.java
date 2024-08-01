@@ -10,9 +10,10 @@ import org.bukkit.inventory.ItemStack;
  */
 public class Item {
 
+    private int ID;
     private ItemStack item;
     private Team team;
-    private int chance;
+    private Integer chance;
     private boolean isCurrency;
 
     public Item(ItemStack item, Team team, int chance, boolean isCurrency) {
@@ -20,6 +21,22 @@ public class Item {
         this.team = team;
         this.chance = chance;
         this.isCurrency = isCurrency;
+    }
+
+    public Item(Integer ID, ItemStack item, Team team, int chance, boolean isCurrency) {
+        this.ID = ID;
+        this.item = item;
+        this.team = team;
+        this.chance = chance;
+        this.isCurrency = isCurrency;
+    }
+
+    public Integer getID() {
+        return ID;
+    }
+
+    public void setID(Integer ID) {
+        this.ID = ID;
     }
 
     public ItemStack getItem() {

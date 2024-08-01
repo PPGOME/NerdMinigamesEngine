@@ -1,8 +1,10 @@
-package me.ppgome.nerdminigames.nerdminigames.arenabuilder;
+package me.ppgome.nerdminigames.nerdminigames.commands;
 
 import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.arguments.Argument;
+import dev.jorel.commandapi.arguments.GreedyStringArgument;
 import dev.jorel.commandapi.arguments.IntegerArgument;
+import dev.jorel.commandapi.arguments.TextArgument;
 import me.ppgome.nerdminigames.nerdminigames.CurrencyConfig;
 import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import me.ppgome.nerdminigames.nerdminigames.ArenasConfig;
@@ -12,8 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
-import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.isInteger;
 
 public class CreationCommands {
 
@@ -33,8 +33,31 @@ public class CreationCommands {
                     ItemStack item = p.getInventory().getItemInMainHand();
                     if(!item.isSimilar(new ItemStack(Material.AIR))) {
                         int rate = (int) commandArguments.get("rate");
-                        new CurrencyConfig(NerdMinigames.getPlugin()).addCurrency(item, rate);
+                        new CurrencyConfig(NerdMinigames.PLUGIN).addCurrency(item, rate);
                     }
                 }).register();
+        new CommandAPICommand("game")
+                .withSubcommand(new CommandAPICommand("load")
+                        .withArguments(new TextArgument("Arena"))
+                        .executes((sender, args) -> {
+                            ArenasConfig arenasConfig = new ArenasConfig(NerdMinigames.PLUGIN);
+                            for(String arena : arenasConfig.getArenas()) {
+                                if(arena.equalsIgnoreCase((String) args.get("Arena"))) {
+                                }
+                            }
+                        })
+                )
+                .withSubcommand(new CommandAPICommand("start")
+                    .withArguments(new IntegerArgument("Game ID"))
+                    .executes((sender, args) -> {
+                        NerdMinigames.getActiveGames((Integer) args.get("Game ID")).start();
+                    })
+                )
+                .withSubcommand(new CommandAPICommand("end")
+                        .withArguments(new IntegerArgument("Game ID"))
+                        .executes((sender, args) -> {
+
+                        })
+                );
     }
 }

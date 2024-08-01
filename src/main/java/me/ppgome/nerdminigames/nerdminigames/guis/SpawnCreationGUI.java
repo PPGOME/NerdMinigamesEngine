@@ -87,7 +87,7 @@ public class SpawnCreationGUI implements NerdGUI {
                             for(Team team : arena.getTeams()) {
                                 if(team.getTeamName().equalsIgnoreCase(teamInput.getInput())) {
                                     arena.addSpawn(new Spawn(nameInput.getInput(), location, team));
-                                    new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+                                    new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
                                     backgui.displayGUI();
                                 }
                             }
@@ -174,7 +174,7 @@ public class SpawnCreationGUI implements NerdGUI {
         if(confirmdelete != null) {
             if(confirmdelete.getInput()) {
                 arena.deleteSpawn(spawn);
-                new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+                new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
                 backgui.displayGUI();
             }
         }

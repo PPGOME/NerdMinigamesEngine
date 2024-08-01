@@ -149,7 +149,7 @@ public class TeamCreationGUI implements NerdGUI {
 
         if(deleteTeam != null && deleteTeam.getInput()) {
             arena.deleteTeam(team);
-            new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+            new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
             backgui.displayGUI();
             backgui.displayGUI();
         }

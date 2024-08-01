@@ -24,6 +24,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
@@ -70,6 +71,17 @@ public class CreationListeners implements Listener {
                                 }
                             }
                         }
+                    } else {
+                        NamespacedKey arenastorage = new NamespacedKey(NerdMinigames.PLUGIN, "arenastorage");
+                        Container container = (Container) block.getState();
+                        PersistentDataContainer pdcontainer = ((Container) block.getState()).getPersistentDataContainer();
+                        if(pdcontainer.has(arenastorage)) {
+                            if(pdcontainer.get(arenastorage, PersistentDataType.BOOLEAN)) {
+                                e.setCancelled(true);
+                                p.sendActionBar(Component.text("This storage block is part of an arena. Edit it through the editor!")
+                                        .color(TextColor.fromHexString("#ff3a3a")));
+                            }
+                        }
                     }
                 }
             }
@@ -82,13 +94,10 @@ public class CreationListeners implements Listener {
         Block block = e.getBlock();
         Location location = block.getLocation();
         if((block.getState() instanceof Container)) {
-            System.out.println("Container yes");
             Container container = (Container) block.getState();
-            NamespacedKey key = new NamespacedKey(NerdMinigames.getPlugin(), "arenastorage");
+            NamespacedKey key = new NamespacedKey(NerdMinigames.PLUGIN, "arenastorage");
             if(container.getPersistentDataContainer().has(key, PersistentDataType.BOOLEAN)) {
-                System.out.println("It has the juice, it has the juice");
                 if(container.getPersistentDataContainer().get(key, PersistentDataType.BOOLEAN)) {
-                    System.out.println("Trooo!");
                     e.setCancelled(true);
                     player.sendActionBar(Component.text("This chest is part of an arena. Please remove it from " +
                             "the arena before breaking.").color(TextColor.fromHexString("#FF5555")));

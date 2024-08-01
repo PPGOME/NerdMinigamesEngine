@@ -8,7 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 
 public class PlayerMessager {
-    private static final ConfigurationSection config = NerdMinigames.getPlugin().getConfig();
+    private static final ConfigurationSection config = NerdMinigames.PLUGIN.getConfig();
 
     public static void errorMessage(String player, String message) {
         Player p = Bukkit.getPlayer(player);

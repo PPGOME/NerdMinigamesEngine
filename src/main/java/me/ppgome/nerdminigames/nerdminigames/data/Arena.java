@@ -24,6 +24,7 @@ public class Arena {
     private HashMap<String, Integer> boundaries = new HashMap<>();
     private List<Team> teams = new ArrayList<>();
     private List<Item> items = new ArrayList<>();
+    private Integer maxitemid;
     private List<Spawn> spawns = new ArrayList<>();
     private List<Objective> objectives = new ArrayList<>();
     private List<Storage> storage = new ArrayList<>();
@@ -42,17 +43,19 @@ public class Arena {
         this.boundaries.put("y2", corner2.getY());
         this.boundaries.put("z2", corner2.getZ());
         this.currencyrate = 16;
+        this.maxitemid = 0;
     }
 
     public Arena(String arenaName, String owner, String world, HashMap<String, Integer> boundaries, List<Team> teams,
-                 List<Item> items, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage, List<Armour> armour,
-                 int currencyrate) {
+                 List<Item> items, int maxitemid, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage,
+                 List<Armour> armour, int currencyrate) {
         this.arenaName = arenaName;
         this.owner = owner;
         this.world = world;
         this.boundaries = boundaries;
         this.teams = teams;
         this.items = items;
+        this.maxitemid = maxitemid;
         this.spawns = spawns;
         this.storage = storage;
         this.currencyrate = currencyrate;
@@ -116,7 +119,7 @@ public class Arena {
         } else {
             arena.addTeam(team);
         }
-        new ArenasConfig(NerdMinigames.getPlugin()).editArena(arena);
+        new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
     }
 
     public void deleteTeam(Team team) {
@@ -148,7 +151,18 @@ public class Arena {
     }
 
     public void addItem(Item item) {
+        System.out.println("max: " + this.getMaxitemid());
+        item.setID(this.getMaxitemid() + 1);
+        this.setMaxitemid(item.getID());
         this.items.add(item);
+    }
+
+    public Integer getMaxitemid() {
+        return maxitemid;
+    }
+
+    public void setMaxitemid(Integer maxid) {
+        this.maxitemid = maxid;
     }
 
     public void deleteItem(Item item) {

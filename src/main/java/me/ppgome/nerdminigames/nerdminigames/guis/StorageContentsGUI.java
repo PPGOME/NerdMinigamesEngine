@@ -49,12 +49,18 @@ public class StorageContentsGUI implements NerdGUI {
 
         StaticPane buttons = new StaticPane(0, 0, 9, 5, Pane.Priority.HIGHEST);
 
-        for(StorageItem item : storage.getItems()) {
-            itemlist.add(arena.getItems().get(item.getID()).getItem());
+        itemlist = new ArrayList<>();
+        for(StorageItem storageItem : storage.getItems()) {
+            for(Item item : arena.getItems()) {
+                if(item.getID() == storageItem.getID()) {
+                    ItemStack cloneditem = new ItemStack(item.getItem());
+                    cloneditem.setAmount(1);
+                    itemlist.add(cloneditem);
+                }
+            }
         }
 
         PaginatedPane pages = new PaginatedPane(0, 1, 9, 3, Pane.Priority.HIGH);
-        itemlist = new ArrayList<>();
         pages.clear();
 
         pages.populateWithItemStacks(itemlist);

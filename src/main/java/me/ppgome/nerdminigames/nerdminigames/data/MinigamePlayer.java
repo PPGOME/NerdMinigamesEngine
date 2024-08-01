@@ -1,33 +1,30 @@
 package me.ppgome.nerdminigames.nerdminigames.data;
 
+import org.bukkit.entity.Player;
+
 public class MinigamePlayer {
 
-    private int playerid;
-    private String uuid;
+    private Player player;
     private int gameid;
-    private String team;
+    private Team team;
 
-    public MinigamePlayer(int playerid, String uuid, int gameid, String team) {
-        this.playerid = playerid;
-        this.uuid = uuid;
+    public MinigamePlayer(Player player, int gameid, Team team) {
+        this.player = player;
         this.gameid = gameid;
         this.team = team;
     }
 
-    public int getPlayerid() {
-        return playerid;
+    public MinigamePlayer(Player player, int gameid) {
+        this.player = player;
+        this.gameid = gameid;
     }
 
-    public void setPlayerid(int playerid) {
-        this.playerid = playerid;
+    public Player getPlayer() {
+        return player;
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     public int getGameid() {
@@ -38,11 +35,11 @@ public class MinigamePlayer {
         this.gameid = gameid;
     }
 
-    public String getTeam() {
+    public Team getTeam() {
         return team;
     }
 
-    public void setTeam(String team) {
+    public void setTeam(Team team) {
         this.team = team;
     }
 
