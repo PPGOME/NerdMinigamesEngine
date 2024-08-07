@@ -2,7 +2,9 @@ package me.ppgome.nerdminigames.nerdminigames.data;
 
 import org.bukkit.inventory.ItemStack;
 
-public class StorageItem {
+import java.io.Serializable;
+
+public class StorageItem implements Serializable {
 
     private int ID;
     private int min;

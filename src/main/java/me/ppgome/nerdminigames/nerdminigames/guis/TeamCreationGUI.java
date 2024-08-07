@@ -73,7 +73,7 @@ public class TeamCreationGUI implements NerdGUI {
                             && isInteger(maxPlayers.getInput()) && !minPlayers.getInput().equalsIgnoreCase("")
                             && isInteger(minPlayers.getInput())) {
                         team = new Team(teamName.getInput(), Integer.parseInt(minPlayers.getInput()), Integer.parseInt(maxPlayers.getInput()));
-                        arena.editTeam(team, arena);
+                        arena.editTeam(team);
                         backgui.displayGUI();
                     }
                 }
@@ -87,7 +87,7 @@ public class TeamCreationGUI implements NerdGUI {
                 if(maxPlayers != null && isInteger(maxPlayers.getInput())) {
                     team.setMaxPlayers(Integer.parseInt(maxPlayers.getInput()));
                 }
-                arena.editTeam(team, arena);
+                arena.editTeam(team);
                 backgui.displayGUI();
             }
 

@@ -8,6 +8,7 @@ import me.ppgome.nerdminigames.nerdminigames.data.Minigame;
 import me.ppgome.nerdminigames.nerdminigames.guis.NerdGUI;
 import me.ppgome.nerdminigames.nerdminigames.listeners.CreationListeners;
 import me.ppgome.nerdminigames.nerdminigames.listeners.WorldGuardListeners;
+import net.royawesome.jlibnoise.module.combiner.Min;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -24,6 +25,8 @@ public final class NerdMinigames extends JavaPlugin {
     private static HashMap<UUID, NerdGUI> pendingInput = new HashMap<>();
 
     private static HashMap<Integer, Minigame> activeGames = new HashMap<>();
+
+    public static int NEXT_GAMEID = 0;
 
     //--------------------------------------------------------------------------------------
 
@@ -124,12 +127,17 @@ public final class NerdMinigames extends JavaPlugin {
         pendingInput.put(uuid, gui);
     }
 
-    public static Minigame getActiveGames(int gameID) {
+    public static HashMap<Integer, Minigame> getActiveGames() {
+        return activeGames;
+    }
+
+    public static Minigame getActiveGame(int gameID) {
         return activeGames.get(gameID);
     }
 
     public static void addActiveGame(Minigame minigame) {
         activeGames.put(minigame.getGameid(), minigame);
+        NEXT_GAMEID++;
     }
 
 }

@@ -1,4 +1,6 @@
 package me.ppgome.nerdminigames.nerdminigames.data;
 
-public class Objective {
+import java.io.Serializable;
+
+public class Objective implements Serializable {
 }

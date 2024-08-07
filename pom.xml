@@ -56,8 +56,8 @@
 
     <repositories>
         <repository>
-            <id>papermc-repo</id>
-            <url>https://papermc.io/repo/repository/maven-public/</url>
+            <id>papermc</id>
+            <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
         <repository>
             <id>sonatype</id>
@@ -120,6 +120,15 @@
                     <artifactId>*</artifactId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>net.mcjukebox</groupId>
+            <artifactId>MCJukebox</artifactId>
+            <version>2.6.8</version>
+            <scope>system</scope>
+            <systemPath>
+                D:\Plugins(IDEA)\MCJukebox.jar
+            </systemPath>
         </dependency>
     </dependencies>
 </project>

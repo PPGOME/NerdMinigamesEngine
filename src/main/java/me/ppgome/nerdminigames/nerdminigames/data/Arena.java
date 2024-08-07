@@ -6,17 +6,15 @@ import me.ppgome.nerdminigames.nerdminigames.NerdMinigames;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /**
  * The object representing a minigame arena
- *
- * @since 0.0.1
- * @author Keelan Delorme
  */
-public class Arena {
+public class Arena implements Serializable {
 
     private String arenaName;
     private String owner;
@@ -32,6 +30,16 @@ public class Arena {
 
     private int currencyrate;
 
+    Arena copyArena;
+
+    /**
+     * Constructor for an arena - initial creation
+     * @param arenaName The name of the arena
+     * @param owner The owner of the arena
+     * @param world The world the arena is in
+     * @param corner1 One corner of the arena's worldguard region
+     * @param corner2 The opposite corner of the arena's worldguard region
+     */
     public Arena(String arenaName, Player owner, String world, BlockVector3 corner1, BlockVector3 corner2) {
         this.arenaName = arenaName;
         this.owner = owner.getUniqueId().toString();
@@ -46,6 +54,21 @@ public class Arena {
         this.maxitemid = 0;
     }
 
+    /**
+     * Constructor for the arena - loading from config
+     * @param arenaName The name of the arena
+     * @param owner The owner of the arena
+     * @param world The world the arena is in
+     * @param boundaries The coordinates that define the worldguard region of the arena
+     * @param teams The teams of this arena
+     * @param items The items of this arena
+     * @param maxitemid The highest ID of an item in the arena (allows for database-like numbering system)
+     * @param spawns The spawns of the arena
+     * @param objectives The objectives of the arena
+     * @param storage The storage of the arena
+     * @param armour The armour of the arena
+     * @param currencyrate The rate of conversion for this arena's currency
+     */
     public Arena(String arenaName, String owner, String world, HashMap<String, Integer> boundaries, List<Team> teams,
                  List<Item> items, int maxitemid, List<Spawn> spawns, List<Objective> objectives, List<Storage> storage,
                  List<Armour> armour, int currencyrate) {
@@ -61,42 +84,51 @@ public class Arena {
         this.currencyrate = currencyrate;
     }
 
+    /**
+     * Gets the arena name
+     * @return the arena's name
+     */
     public String getArenaName() {
         return arenaName;
     }
 
-    public void setArenaName(String arenaName) {
-        this.arenaName = arenaName;
-    }
-
+    /**
+     * Gets the arena's owner's name
+     * @return The arena's owner's name
+     */
     public String getOwner() {
         return owner;
     }
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-    }
-
+    /**
+     * Gets the world the arena is in
+     * @return The world the arena is in
+     */
     public String getWorld() {
         return world;
     }
 
-    public void setWorld(String world) {
-        this.world = world;
-    }
-
+    /**
+     * Gets the worldguard region boundaries of the arena
+     * @return The worldguard region boundaries of the arena
+     */
     public HashMap<String, Integer> getBoundaries() {
         return boundaries;
     }
 
-    public void setBoundaries(HashMap<String, Integer> boundaries) {
-        this.boundaries = boundaries;
-    }
-
+    /**
+     * Gets the teams of the arena
+     * @return a list of teams in the arena
+     */
     public List<Team> getTeams() {
         return teams;
     }
 
+    /**
+     * Gets a specific team from the arena
+     * @param name The name of the team
+     * @return The team
+     */
     public Team getTeamByName(String name) {
         for(Team team : getTeams()) {
             if (team.getTeamName().equalsIgnoreCase(name)) {
@@ -106,22 +138,34 @@ public class Arena {
         return null;
     }
 
+    /**
+     * Add a team to the arena
+     * @param team The team to add
+     */
     public void addTeam(Team team) {
         this.teams.add(team);
     }
 
-    public void editTeam(Team team, Arena arena) {
-        Team tempteam = arena.getTeamByName(team.getTeamName());
+    /**
+     * Edit an arena's team
+     * @param team The team being edited
+     */
+    public void editTeam(Team team) {
+        Team tempteam = this.getTeamByName(team.getTeamName());
         if(tempteam != null) {
             tempteam.setTeamName(team.getTeamName());
             tempteam.setMinPlayers(team.getMinPlayers());
             tempteam.setMaxPlayers(team.getMaxPlayers());
         } else {
-            arena.addTeam(team);
+            this.addTeam(team);
         }
-        new ArenasConfig(NerdMinigames.PLUGIN).editArena(arena);
+        new ArenasConfig(NerdMinigames.PLUGIN).editArena(this);
     }
 
+    /**
+     * Delete a team from an arena
+     * @param team The team to be deleted from the arena
+     */
     public void deleteTeam(Team team) {
         this.teams.remove(team);
         for(Item item : items) {
@@ -131,10 +175,19 @@ public class Arena {
         }
     }
 
+    /**
+     * Get the items from an arena
+     * @return A list of items
+     */
     public List<Item> getItems() {
         return items;
     }
 
+    /**
+     * Checks if an item is the same as an item in the arena's list
+     * @param checkItem
+     * @return
+     */
     public Item getItemByItem(ItemStack checkItem) {
         for(Item item : getItems()) {
             System.out.println(item.getItem());
@@ -142,7 +195,6 @@ public class Arena {
                 return item;
             }
         }
-        System.out.println("No result");
         return null;
     }
 

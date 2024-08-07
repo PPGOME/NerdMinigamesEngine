@@ -5,16 +5,14 @@ import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Class representing the storage blocks in an arena
- *
- * @since 0.0.5
- * @author Keelan Delorme
  */
-public class Storage {
+public class Storage implements Serializable {
 
     private Container container;
     private Location location;

@@ -21,9 +21,6 @@ import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.createButton;
 
 /**
  * GUI for creating a StorageItem
- *
- * @since 0.0.4
- * @author Keelan Delorme
  */
 public class StorageItemCreationGUI implements NerdGUI {
 

@@ -5,7 +5,6 @@ import net.mcjukebox.plugin.bukkit.api.JukeboxAPI;
 import net.mcjukebox.plugin.bukkit.api.ResourceType;
 import net.mcjukebox.plugin.bukkit.api.models.Media;
 import net.raidstone.wgevents.events.RegionEnteredEvent;
-import net.raidstone.wgevents.events.RegionLeftEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 

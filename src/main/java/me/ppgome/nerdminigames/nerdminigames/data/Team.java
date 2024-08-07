@@ -1,12 +1,11 @@
 package me.ppgome.nerdminigames.nerdminigames.data;
 
+import java.io.Serializable;
+
 /**
  * The object representing a team in an arena
- *
- * @since 0.0.2
- * @author Keelan Delorme
  */
-public class Team {
+public class Team implements Serializable {
 
     private String teamName;
     private int minPlayers = 1;

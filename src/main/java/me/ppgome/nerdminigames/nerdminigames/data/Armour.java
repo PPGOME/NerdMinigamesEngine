@@ -1,4 +1,6 @@
 package me.ppgome.nerdminigames.nerdminigames.data;
 
-public class Armour {
+import java.io.Serializable;
+
+public class Armour implements Serializable {
 }

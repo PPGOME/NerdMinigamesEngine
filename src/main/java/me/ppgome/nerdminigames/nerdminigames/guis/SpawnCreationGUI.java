@@ -16,17 +16,13 @@ import me.ppgome.nerdminigames.nerdminigames.data.Arena;
 import me.ppgome.nerdminigames.nerdminigames.data.Spawn;
 import me.ppgome.nerdminigames.nerdminigames.data.Team;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.KeybindComponent;
 import net.kyori.adventure.text.format.TextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import static me.ppgome.nerdminigames.nerdminigames.guis.GUIUtils.*;
-import static me.ppgome.nerdminigames.nerdminigames.messages.PlayerMessager.infoMessage;
 
 public class SpawnCreationGUI implements NerdGUI {
 

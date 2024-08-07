@@ -2,17 +2,20 @@ package me.ppgome.nerdminigames.nerdminigames.data;
 
 import org.bukkit.Location;
 
+import java.io.Serializable;
+
 /**
  * The object representing a spawn point for a team in an arena
  *
  * @since 0.0.4
  * @author Keelan Delorme
  */
-public class Spawn {
+public class Spawn implements Serializable {
 
     private String name;
     private Location location;
     private Team team;
+    private boolean isActive = true;
 
     /**
      * The constructor
@@ -72,5 +75,21 @@ public class Spawn {
      */
     public Team getTeam() {
         return team;
+    }
+
+    /**
+     * Returns the spawn's active status
+     * @return The spawn's active status
+     */
+    public boolean isActive() {
+        return this.isActive;
+    }
+
+    /**
+     * Sets whether or not the spawn is active
+     * @param active The state of the spawn's activity
+     */
+    public void setActive(boolean active) {
+        this.isActive = active;
     }
 }
